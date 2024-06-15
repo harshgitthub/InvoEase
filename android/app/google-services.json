@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341580860242",
+    "project_id": "johoclone",
+    "storage_bucket": "johoclone.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341580860242:android:7ffb1723d0af06867fc88b",
+        "android_client_info": {
+          "package_name": "com.example.cloneapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8BqNH1Tx0J33FE9cbkPlZ2vv-xrcHRoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
