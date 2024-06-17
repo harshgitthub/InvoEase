@@ -6,7 +6,7 @@ class NotesAddScreen extends StatefulWidget {
   final String? noteId;
   final Map<String, dynamic>? noteData;
 
-  NotesAddScreen({this.noteId, this.noteData});
+  const NotesAddScreen({super.key, this.noteId, this.noteData});
 
   @override
   _NotesAddScreenState createState() => _NotesAddScreenState();

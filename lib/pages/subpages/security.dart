@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class Security extends StatelessWidget {
-  const Security({Key? key}) : super(key: key);
+  const Security({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +16,14 @@ class Security extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _buildCard(
-                title: 'App Lock',
-                subtitle:
-                    'Set app lock to keep your data secure and add a layer of security',
-                icon: Icons.lock,
-              ),
+            //  _buildCard(
+            // title: 'App Lock',
+            // subtitle: 'Set app lock to keep your data secure and add a layer of security',
+            // icon: Icons.lock,
+            // onPressed: () {
+            //   // Define the action that happens when the card is pressed
+            // },
+             
               _buildCard(
                 title: 'Send diagnostics and usage statistics',
                 icon: Icons.analytics,

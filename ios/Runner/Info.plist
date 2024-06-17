@@ -44,6 +44,9 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>NSDocumentsUsageDescription</key>
+<string>We need access to your documents for saving the PDF.</string>
+
 	<true/>
 </dict>
 </plist>

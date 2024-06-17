@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Notes extends StatelessWidget {
-  const Notes({Key? key});
+  const Notes({super.key});
 
   Future<void> _deleteNote(String noteId) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -37,20 +37,6 @@ class Notes extends StatelessWidget {
             );
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter),
-            onPressed: () {
-              // Implement filter functionality
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Implement search functionality
-            },
-          ),
-        ],
       ),
       drawer: drawer(context),
       floatingActionButton: FloatingActionButton(
@@ -87,19 +73,20 @@ class Notes extends StatelessWidget {
                         (noteData['dateTime'] as Timestamp).toDate();
 
                     return Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      elevation: 1,
+                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                       child: ListTile(
-                        title: Text(task),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                        title: Text(task , style: TextStyle(fontSize:21 ),),
                         subtitle: Text(
-                          'Date: ${dateTime.toLocal()}',
-                          style: const TextStyle(fontSize: 12.0),
+                          '${dateTime.toLocal()}',
+                          style: const TextStyle(fontSize: 18.0 , fontWeight: FontWeight.bold),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit),
+                              icon: const Icon(Icons.edit , color: Colors.blue , size: 30,),
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -113,7 +100,7 @@ class Notes extends StatelessWidget {
                               },
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete),
+                              icon: const Icon(Icons.delete ,  color: Colors.red , size: 30,),
                               onPressed: () => _deleteNote(noteId),
                             ),
                           ],

@@ -44,9 +44,9 @@ class _SettingState extends State<Setting> {
             // Subheadings
             ListTile(
               leading: const Icon(Icons.rule),
-              title: const Text('Organisation Rules'),
+              title: const Text('Organisation Profile'),
               onTap: () {
-                // Add functionality for this list tile
+                Navigator.pushNamed(context, '/profile');
               },
             ),
             ListTile(

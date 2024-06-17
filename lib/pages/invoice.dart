@@ -1,330 +1,32 @@
-// import 'package:cloneapp/pages/home.dart';
-// import 'package:flutter/material.dart';
-// // import 'package:share/share.dart';
-
-// class Invoice extends StatefulWidget {
-//   const Invoice({super.key});
-
-//   @override
-//   State<Invoice> createState() => _InvoiceState();
-// }
-
-// class _InvoiceState extends State<Invoice> {
-
-  
-//   @override
-//   Widget build(BuildContext context) {
-//     return DefaultTabController(
-//       length: 4, // Number of tabs
-//       child: Scaffold(
-//     // return Scaffold(
-//         appBar: AppBar(
-//           title: const Text("INVOICE"),
-//           leading: Builder(
-//             builder: (BuildContext context) {
-//               return IconButton(
-//                 icon: const Icon(Icons.menu),
-//                 onPressed: () {
-//                   Scaffold.of(context).openDrawer();
-//                 },
-//                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-//               );
-//             },
-//           ),
-//           actions: [
-//             IconButton(
-//               icon: const Icon(Icons.filter),
-//               onPressed: () {
-//                 // Implement filter functionality
-//               },
-//             ),
-//             IconButton(
-//               icon: const Icon(Icons.search),
-//               onPressed: () {
-//                 // Implement search functionality
-//               },
-//             ),
-//           ],
-//           bottom: const TabBar(
-//             tabs: [
-//               Tab(text: 'All'),
-//               Tab(text: 'Unpaid'),
-//               Tab(text: 'Paid'),
-//               Tab(text: 'Draft'),
-//             ],
-//           ),
-//         ),
-//         drawer: drawer(context),
-//         floatingActionButton: FloatingActionButton(
-        
-//         onPressed: () {
-//           Navigator.pushNamed(context, '/invoiceadd');
-//         },
-//         child: const Icon(Icons.add),
-//       ),
-//     )
-//     );
-//     // );
-//   }
-// }
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-
-// class Invoice extends StatefulWidget {
-//   const Invoice({super.key});
-
-//   @override
-//   State<Invoice> createState() => _InvoiceState();
-// }
-
-// class _InvoiceState extends State<Invoice> {
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//   User? get currentUser => _auth.currentUser;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return DefaultTabController(
-//       length: 4, // Number of tabs
-//       child: Scaffold(
-//         appBar: AppBar(
-//           title: const Text("INVOICE"),
-//           leading: Builder(
-//             builder: (BuildContext context) {
-//               return IconButton(
-//                 icon: const Icon(Icons.menu),
-//                 onPressed: () {
-//                   Scaffold.of(context).openDrawer();
-//                 },
-//                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-//               );
-//             },
-//           ),
-//           actions: [
-//             IconButton(
-//               icon: const Icon(Icons.filter),
-//               onPressed: () {
-//                 // Implement filter functionality
-//               },
-//             ),
-//             IconButton(
-//               icon: const Icon(Icons.search),
-//               onPressed: () {
-//                 // Implement search functionality
-//               },
-//             ),
-//           ],
-//           bottom: const TabBar(
-//             tabs: [
-//               Tab(text: 'All'),
-//               Tab(text: 'Unpaid'),
-//               Tab(text: 'Paid'),
-//               Tab(text: 'Draft'),
-//             ],
-//           ),
-//         ),
-//         drawer: Drawer(
-//           // Implement your drawer widget here
-//         ),
-//         floatingActionButton: FloatingActionButton(
-//           onPressed: () {
-//             Navigator.pushNamed(context, '/invoiceadd');
-//           },
-//           child: const Icon(Icons.add),
-//         ),
-//         body: TabBarView(
-//           children: [
-//             buildInvoiceList(context, 'All'),
-//             buildInvoiceList(context, 'Unpaid'),
-//             buildInvoiceList(context, 'Paid'),
-//             buildInvoiceList(context, 'Draft'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget buildInvoiceList(BuildContext context, String status) {
-//     return StreamBuilder<QuerySnapshot>(
-//       stream: FirebaseFirestore.instance
-//           .collection("USERS")
-//           .doc(currentUser!.uid)
-//           .collection("invoices")
-//           .snapshots(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return Center(child: CircularProgressIndicator());
-//         } else if (snapshot.hasError) {
-//           return Center(child: Text('Error: ${snapshot.error}'));
-//         } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-//           return Center(child: Text('No invoices found.'));
-//         }
-
-//         var invoices = snapshot.data!.docs;
-
-//         if (status != 'All') {
-//           invoices = invoices.where((doc) {
-//             return doc['status'] == status;
-//           }).toList();
-//         }
-
-//         return ListView.builder(
-//           itemCount: invoices.length,
-//           itemBuilder: (context, index) {
-//             var invoice = invoices[index];
-//             return ListTile(
-//               title: Text(invoice['customerName'] ?? 'No customer name'),
-//               subtitle: Text('Due Date: ${invoice['dueDate']?.toDate().toString() ?? 'No due date'}'),
-//               trailing: Text('Status: ${invoice['status'] ?? 'No status'}'),
-//               onTap: () {
-//                 // Implement your invoice detail view navigation here
-//               },
-//             );
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
-
-
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-
-// class Invoice extends StatefulWidget {
-//   const Invoice({super.key});
-
-//   @override
-//   State<Invoice> createState() => _InvoiceState();
-// }
-
-// class _InvoiceState extends State<Invoice> {
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//   User? get currentUser => _auth.currentUser;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return DefaultTabController(
-//       length: 4, // Number of tabs
-//       child: Scaffold(
-//         appBar: AppBar(
-//           title: const Text("INVOICE"),
-//           leading: Builder(
-//             builder: (BuildContext context) {
-//               return IconButton(
-//                 icon: const Icon(Icons.menu),
-//                 onPressed: () {
-//                   Scaffold.of(context).openDrawer();
-//                 },
-//                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-//               );
-//             },
-//           ),
-//           actions: [
-//             IconButton(
-//               icon: const Icon(Icons.filter),
-//               onPressed: () {
-//                 // Implement filter functionality
-//               },
-//             ),
-//             IconButton(
-//               icon: const Icon(Icons.search),
-//               onPressed: () {
-//                 // Implement search functionality
-//               },
-//             ),
-//           ],
-//           bottom: const TabBar(
-//             tabs: [
-//               Tab(text: 'All'),
-//               Tab(text: 'Unpaid'),
-//               Tab(text: 'Paid'),
-//               Tab(text: 'Draft'),
-//             ],
-//           ),
-//         ),
-//         drawer: Drawer(
-//           // Implement your drawer widget here
-//         ),
-//         floatingActionButton: FloatingActionButton(
-//           onPressed: () {
-//             Navigator.pushNamed(context, '/invoiceadd');
-//           },
-//           child: const Icon(Icons.add),
-//         ),
-//         body: TabBarView(
-//           children: [
-//             buildInvoiceList(context),
-//             buildInvoiceList(context),
-//             buildInvoiceList(context),
-//             buildInvoiceList(context),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget buildInvoiceList(BuildContext context) {
-//     return StreamBuilder<QuerySnapshot>(
-//       stream: FirebaseFirestore.instance
-//           .collection("USERS")
-//           .doc(currentUser!.uid)
-//           .collection("invoices")
-//           .snapshots(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return Center(child: CircularProgressIndicator());
-//         } else if (snapshot.hasError) {
-//           return Center(child: Text('Error: ${snapshot.error}'));
-//         } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-//           return Center(child: Text('No invoices found.'));
-//         }
-
-//         var invoices = snapshot.data!.docs;
-
-//         return ListView.builder(
-//           itemCount: invoices.length,
-//           itemBuilder: (context, index) {
-//             var invoice = invoices[index];
-//             return ListTile(
-//               title: Text(invoice['customerName'] ?? 'No invoice number'),
-//               subtitle: Text('InvoiceId: ${invoice['invoiceId']?.toString() ?? 'No due date'}' " " 'Payment Method : ${invoice["paymentMethod"]?.toString() ?? 'No due date'}'),
-//               trailing: Text('invoiceDate ${invoice['invoiceDate']?.toString()  ?? 'No due date'}'),
-//               onTap: () {
-//                 Navigator.pushNamed(context, '/invoiceadd');
-//               },
-//             );
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
-
 import 'package:cloneapp/pages/home.dart';
-import 'package:cloneapp/pages/subpages/billing.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloneapp/pages/subpages/billing.dart';
+import 'package:intl/intl.dart';
 
 class InvoiceView extends StatefulWidget {
   const InvoiceView({super.key});
 
   @override
-  State<InvoiceView> createState() => _InvoiceState();
+  State<InvoiceView> createState() => _InvoiceViewState();
 }
 
-class _InvoiceState extends State<InvoiceView> {
+class _InvoiceViewState extends State<InvoiceView> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? get currentUser => _auth.currentUser;
+  late User? currentUser;
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = _auth.currentUser;
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4, // Number of tabs
+      length: 3, // Number of tabs: All, Unpaid, and Paid
       child: Scaffold(
         appBar: AppBar(
           title: const Text("INVOICE"),
@@ -340,85 +42,217 @@ class _InvoiceState extends State<InvoiceView> {
             },
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.filter),
-              onPressed: () {
-                // Implement filter functionality
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // Implement search functionality
-              },
-            ),
-          ],
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'All'),
-              Tab(text: 'Unpaid'),
-              Tab(text: 'Paid'),
-              Tab(text: 'Draft'),
-            ],
-          ),
-        ),
-        drawer: drawer(context),
-        floatingActionButton: FloatingActionButton(
+             IconButton(
+            
           onPressed: () {
             Navigator.pushNamed(context, '/invoiceadd');
           },
-          child: const Icon(Icons.add),
+          icon: const Icon(Icons.add ),
+
         ),
+           IconButton(
+  icon: const Icon(Icons.search),
+  onPressed: () {
+    showSearch(
+      context: context,
+      delegate: InvoiceSearchDelegate(
+        currentUser: currentUser,
+        onQueryChanged: (query) {
+          // Defer the state update until after the build cycle completes
+          WidgetsBinding.instance!.addPostFrameCallback((_) {
+            setState(() {
+              _searchQuery = query;
+            });
+          });
+        },
+      ),
+    );
+  },
+),
+
+
+          ],
+         bottom: const TabBar(
+  tabs: [
+    Tab(text: 'All'),
+    Tab(text: 'Unpaid'),
+    Tab(text: 'Paid'),
+  ],
+  labelStyle: TextStyle(fontSize: 19, fontWeight: FontWeight.bold , color: Colors.blue), // Selected tab style
+  unselectedLabelStyle: TextStyle(fontSize: 16 , color: Colors.black,) // Unselected tabs style
+),
+
+        ),
+        drawer: drawer(context),
+       
         body: TabBarView(
           children: [
-            buildInvoiceList(context),
-            buildInvoiceList(context),
-            buildInvoiceList(context),
-            buildInvoiceList(context),
+            _buildInvoiceList(context, null), // All invoices
+            _buildInvoiceList(context, false), // Unpaid invoices
+            _buildInvoiceList(context, true), // Paid invoices
           ],
         ),
       ),
     );
   }
 
-  Widget buildInvoiceList(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("USERS")
-          .doc(currentUser!.uid)
-          .collection("invoices")
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No invoices found.'));
+  Widget _buildInvoiceList(BuildContext context, bool? isPaid) {
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser!.uid)
+        .collection("invoices")
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        return const Center(child: Text('No invoices found.'));
+      }
+
+      var invoices = snapshot.data!.docs;
+
+      // Filter invoices based on the search query and paid status
+      invoices = invoices.where((doc) {
+        var invoice = doc.data() as Map<String, dynamic>;
+        var customerName = invoice['customerName'].toString().toLowerCase();
+
+        if (_searchQuery.isNotEmpty && !customerName.contains(_searchQuery.toLowerCase())) {
+          return false;
         }
 
-        var invoices = snapshot.data!.docs;
+        if (isPaid == null) {
+          return true; // All invoices
+        }
 
-        return ListView.builder(
-          itemCount: invoices.length,
-          itemBuilder: (context, index) {
-            var invoice = invoices[index].data() as Map<String, dynamic>;
-            return ListTile(
-              title: Text( '${invoice['customerName'] ?? 'No customer name'}' , style: const TextStyle(fontSize: 20),),
-              subtitle: Text('Invoice Date: ${invoice['invoiceDate']?.toString() ?? 'No invoice date'}'),
-              trailing: Text('Invoice Id: ${invoice['invoiceId'] ?? 'No status'}' , style:const TextStyle(fontSize: 15),),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BillingPage(invoice: invoice),
-                  ),
-                );
-              },
-            );
-          },
-        );
+        return invoice['status'] == isPaid;
+      }).toList();
+
+      return ListView.builder(
+        itemCount: invoices.length,
+        itemBuilder: (context, index) {
+          var invoice = invoices[index].data() as Map<String, dynamic>;
+          var docId = invoices[index].id;
+          var isInvoicePaid = invoice['status'] ?? false;
+          var dueDate = invoice['dueDate']?.toDate();
+          var formattedDueDate = dueDate != null
+              ? DateFormat('yyyy-MM-dd HH:mm').format(dueDate) // Format due date
+              : 'No due date';
+
+          var isOverdue = !isInvoicePaid && dueDate != null && dueDate.isBefore(DateTime.now());
+
+          return ListTile(
+            contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            title: Text(
+              '${invoice['customerName'] ?? 'No customer name'}',
+              style: const TextStyle(fontSize: 20),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Date: ${invoice['invoiceDate']?.toString() ?? 'No invoice date'}' , style: TextStyle(fontSize: 15),),
+                Text('Due Date: $formattedDueDate',style: TextStyle(fontSize: 15)),
+                if (isOverdue) Text('Status: Overdue', style: TextStyle(color: Colors.red , fontSize: 15)),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+               Text(
+  isInvoicePaid ? 'Paid' : 'Unpaid',
+  style: TextStyle(color: isInvoicePaid ? Colors.green  : Colors.red , fontSize: 15),
+),
+                Checkbox(
+                  value: isInvoicePaid,
+                  onChanged: (value) {
+                    FirebaseFirestore.instance
+                        .collection("USERS")
+                        .doc(currentUser!.uid)
+                        .collection("invoices")
+                        .doc(docId)
+                        .update({
+                          'status': value, // Update 'status' field in Firestore
+                        },);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    _deleteInvoice(currentUser!.uid, docId);
+                  },
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BillingPage(invoice: invoice),
+                ),
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
+
+  void _deleteInvoice(String userId, String docId) async {
+    await FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(userId)
+        .collection("invoices")
+        .doc(docId)
+        .delete();
+  }
+}
+class InvoiceSearchDelegate extends SearchDelegate<String> {
+  final User? currentUser;
+  final ValueChanged<String>? onQueryChanged;
+
+  InvoiceSearchDelegate({required this.currentUser, this.onQueryChanged});
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          clearSearchQuery();
+        },
+      ),
+    ];
+  }
+
+  void clearSearchQuery() {
+    query = '';
+    onQueryChanged?.call(query);
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
       },
     );
   }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    onQueryChanged?.call(query);
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    onQueryChanged?.call(query);
+    return Container();
+  }
 }
+

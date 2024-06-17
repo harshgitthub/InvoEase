@@ -51,49 +51,12 @@ class Home extends StatelessWidget {
             ],
           ),
         ),
-        drawer: drawer(context),
-      body: TabBarView(children:[
-         StreamBuilder(
-  stream: FirebaseFirestore.instance.collection("users").snapshots(),
-  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    if (snapshot.connectionState == ConnectionState.active) {
-      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-        return ListView.builder(
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            var doc = snapshot.data!.docs[index];
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text("${index + 1}"),
-              ),
-              title: Text("${doc["Title"]}"),
-              subtitle: Text("${doc["Description"]}"),
-            );
-          },
-        );
-      } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-        return const Center(child: Text("No data available"));
-      } else if (snapshot.hasError) {
-        return const Center(child: Text("Data has error"));
-      }
-    } 
-    return const Center(child: CircularProgressIndicator());
-  },
-),
- const Center(
-              child: Text('Tab 2 Content'),
-            ),
-const Center(
-              child: Text('tab 3 finally'),
-            ),
-
-      ])     
-,
-
-    )
-     );
+        drawer: drawer(context),    
+      ),
+    );
   }
 }
+
 Drawer drawer(BuildContext context) {
   final currentUser = FirebaseAuth.instance.currentUser;
   return Drawer(
@@ -102,7 +65,7 @@ Drawer drawer(BuildContext context) {
           .collection("USERS")
           .doc(currentUser!.uid)
           .collection("details")
-          .doc(currentUser.uid)
+          .doc(currentUser!.uid)
           .snapshots(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -111,70 +74,156 @@ Drawer drawer(BuildContext context) {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text("No organization data"));
+            // Show a popup and redirect to '/profile'
+            WidgetsBinding.instance!.addPostFrameCallback((_) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: Text("Missing Details"),
+                  content: Text("Please complete your profile details."),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Go to Profile'),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.pushNamed(context, '/details');
+                      },
+                    ),
+                  ],
+                ),
+              );
+            });
+
+            // Return a placeholder or loading indicator until redirect
+            return const Center(child: CircularProgressIndicator());
           } else {
             var userData = snapshot.data!;
-            var organization = userData["Organisation"] ?? "No Organization";
+            var organization = userData["Organisation Name"] ?? "No Organization";
+            var imageUrl = userData["Profile Image"]; // Assuming 'Profile Image' is the key for the image URL
+            var user = userData["Username"] ?? null;
+
             return ListView(
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
-                  child: Text(
-                    organization,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                    ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      imageUrl != null
+                          ? CircleAvatar(
+                              radius: 35,
+                              backgroundImage: NetworkImage(imageUrl),
+                            )
+                          : CircleAvatar(
+                              radius: 30,
+                              child: Icon(Icons.person, size: 30),
+                            ),
+                    
+                      Text(
+                        organization,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                        ),
+                      ),
+                      Text(
+                        user,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                const SizedBox(width: 7,),
                 ListTile(
                   leading: const Icon(Icons.person),
-                  title: const Text('Customer'),
+                  title: const Text(
+                    'Customer',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                  ),
                   onTap: () {
                     Navigator.pushNamed(context, '/customeradd');
                   },
                 ),
+                const Divider(
+                  thickness: 2,
+                  height: 3,
+                ),
                 ListTile(
                   leading: const Icon(Icons.home),
-                  title: const Text('Items'),
+                  title: const Text(
+                    'Items',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                  ),
                   onTap: () {
                     Navigator.pushNamed(context, '/item');
                   },
                 ),
+                const Divider(
+                  thickness: 2,
+                  height: 3,
+                ),
                 ListTile(
                   leading: const Icon(Icons.inbox_rounded),
-                  title: const Text('Invoices'),
+                  title: const Text(
+                    'Invoices',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                  ),
                   onTap: () {
                     Navigator.pushNamed(context, '/invoice');
                   },
                 ),
+                const Divider(
+                  thickness: 2,
+                  height: 3,
+                ),
                 ListTile(
                   leading: const Icon(Icons.note_add),
-                  title: const Text('Add Notes'),
+                  title: const Text(
+                    'Add Notes',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                  ),
                   onTap: () {
                     Navigator.pushNamed(context, '/note');
                   },
                 ),
+                const Divider(
+                  thickness: 2,
+                  height: 3,
+                ),
                 ListTile(
                   leading: const Icon(Icons.expand),
-                  title: const Text('Invoice Pdf'),
+                  title: const Text(
+                    'Invoice Pdf',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                  ),
                   onTap: () {
                     Navigator.pushNamed(context, '/about');
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.report),
-                  title: const Text('Reports'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/report');
-                  },
+                const Divider(
+                  thickness: 2,
+                  height: 3,
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
+                  title: const Text(
+                    'Settings',
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                  ),
                   onTap: () {
                     Navigator.pushNamed(context, '/setting');
                   },
+                ),
+                const Divider(
+                  thickness: 2,
+                  height: 3,
                 ),
               ],
             );

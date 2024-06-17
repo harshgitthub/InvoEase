@@ -11,23 +11,29 @@ class _OpenState extends State<Open> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.blue,// Background color
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 700),
+      body:SingleChildScrollView(
+        child:  
+      Center(
+        child: 
+        SafeArea(child:  Padding(
+          padding: const EdgeInsets.only(top: 20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            
+            // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 100),
               // App Title
               const Text(
-                'Welcome ',
+                'Welcome!',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 40,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                
                 ),
+                
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -54,14 +60,14 @@ class _OpenState extends State<Open> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(height: 200,),
               // Login Button
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 10),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(3),
                   ),
@@ -82,7 +88,7 @@ class _OpenState extends State<Open> {
                   Navigator.pushNamed(context, '/signup');
                 },
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 10),
                   side: const BorderSide(color: Colors.white),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(3),
@@ -104,7 +110,8 @@ class _OpenState extends State<Open> {
         ),
         
       ),
-      
+      )
+      )
     );
   }
 }

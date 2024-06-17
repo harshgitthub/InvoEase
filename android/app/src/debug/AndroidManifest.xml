@@ -3,5 +3,57 @@
          the Flutter tool needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.
     -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    
+// Normal Permissions
+<uses-permission android:name="android.permission.INTERNET" />
+// Allows applications to open network sockets. Necessary for internet communication.
+
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+// Allows applications to access information about networks. Useful for network-related operations.
+
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+// Allows applications to access information about Wi-Fi networks. Useful for Wi-Fi related operations.
+
+<uses-permission android:name="android.permission.BLUETOOTH" />
+// Allows applications to connect to paired bluetooth devices. Required for Bluetooth functionality.
+
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+// Allows applications to discover and pair bluetooth devices. Required for managing Bluetooth connections.
+// Dangerous Permissions (Need user consent at runtime)
+
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+// Allows an application to read from external storage. Required for accessing files on external storage.
+
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+// Allows an application to write to external storage. Required for saving files to external storage.
+
+<uses-permission android:name="android.permission.CAMERA" />
+// Allows applications to use the camera device. Necessary for camera-related operations.
+
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+// Allows an application to access precise location using GPS, Wi-Fi, and mobile networks.
+
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+// Allows an application to access approximate location using network-based sources.
+
+<uses-permission android:name="android.permission.READ_CONTACTS" />
+// Allows an application to read the user's contacts data. Required for accessing contacts.
+
+<uses-permission android:name="android.permission.WRITE_CONTACTS" />
+// Allows an application to write the user's contacts data. Required for modifying or adding contacts.
+
+<uses-permission android:name="android.permission.SEND_SMS" />
+// Allows an application to send SMS messages. Necessary for sending text messages.
+
+<uses-permission android:name="android.permission.READ_SMS" />
+// Allows an application to read SMS messages. Required for reading received SMS messages.
+
+<uses-permission android:name="android.permission.RECEIVE_SMS" />
+// Allows an application to receive SMS messages. Required for receiving and processing incoming SMS messages.
+
+<uses-permission android:name="android.permission.CALL_PHONE" />
+// Allows an application to initiate a phone call without user interaction.
+
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+// Allows read-only access to phone state, including the current cellular network information and status of any ongoing calls.
 </manifest>

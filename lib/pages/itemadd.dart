@@ -23,7 +23,7 @@ class _ItemaddState extends State<Itemadd> {
       print("Please enter required fields");
     } else {
       try {
-        await FirebaseFirestore.instance.collection("USERS").doc(currentuser!.uid).collection("items").doc(currentuser!.uid).set({
+        await FirebaseFirestore.instance.collection("USERS").doc(currentuser!.uid).collection("items").add({
           "Item Name": itemname,
           "Selling Price": sellingprice,
           "Description": description,
@@ -96,6 +96,7 @@ class _ItemaddState extends State<Itemadd> {
               ),
               child: TextFormField(
                 controller: _sellingprice,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: 'selling price',
@@ -118,7 +119,7 @@ class _ItemaddState extends State<Itemadd> {
                     ),
                     child: TextFormField(
                       controller: _description,
-                      keyboardType: TextInputType.phone, // Set keyboard type to phone
+                     
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Description ...',

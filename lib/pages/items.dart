@@ -36,7 +36,6 @@ class _ItemsState extends State<Items> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         title: const Text("Items"),
         leading: Builder(
@@ -101,19 +100,20 @@ class _ItemsState extends State<Items> {
                   String itemId = doc.id;
 
                   return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blueAccent,
-                      child: Text(
-                        "${index + 1}",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                    // leading: CircleAvatar(
+                    //   backgroundColor: Colors.blueAccent,
+                    //   child: Text(
+                    //     "${index + 1}",
+                    //     style: const TextStyle(color: Colors.white),
+                    //   ),
+                    // ),
                     title: Text(
                       "${doc["Item Name"]}",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
+                        fontSize: 25
                       ),
                     ),
                     subtitle: Column(
@@ -122,7 +122,7 @@ class _ItemsState extends State<Items> {
                         const SizedBox(height: 5),
                         Text(
                           "${doc["Description"]}",
-                          style: const TextStyle(color: Colors.grey),
+                          style: const TextStyle(color: Colors.grey ,fontSize: 18),
                         ),
                         const SizedBox(height: 5),
                         Text(
@@ -130,6 +130,7 @@ class _ItemsState extends State<Items> {
                           style: const TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.w500,
+                            fontSize: 18
                           ),
                         ),
                       ],
@@ -148,7 +149,7 @@ class _ItemsState extends State<Items> {
                           ),
                         );
                       },
-                      child: const Text('Update Item'),
+                      child: const Text('Update Item' , style: TextStyle(fontSize: 18 , color: Colors.black),),
                     ),
                   );
                 },
@@ -343,76 +344,98 @@ class _EdititemState extends State<Edititem> {
     // Handle error as needed
   }
 }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Item"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Name ',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Edit Item"),
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Name ',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          TextFormField(
+            controller: _itemname,
+            decoration: InputDecoration(
+              hintText: 'Enter Item Name',
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
-            TextFormField(
-              controller: _itemname,
-              decoration: const InputDecoration(
-                hintText: 'Item Name',
-              ),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Selling Price',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          TextFormField(
+            controller: _sellingprice,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: 'Enter Selling Price',
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Selling Price',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Description',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          TextFormField(
+            controller: _description,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: 'Enter Description',
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
-            TextFormField(
-              controller: _sellingprice,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                hintText: 'Selling Price',
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Description',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              controller: _description,
-              decoration: const InputDecoration(
-                hintText: 'Description',
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
+          ),
+          SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: ElevatedButton(
                   onPressed: updateUser,
-                  child: const Text('Update Item'),
+                  child: Text('Update Item'),
                 ),
-                const SizedBox(width: 20),
-                ElevatedButton(
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
                   onPressed: deleteUserItem,
-                  child: const Text('delete Item'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Red color for delete button
+                  ),
+                  child: Text('Delete Item' , style:  TextStyle(color: Colors.white),),
                 ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close the edit item page
-                  },
-                  child: const Text('Cancel'),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the edit item page
+                },
+                child: Text('Cancel'),
+              ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
