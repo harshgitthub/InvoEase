@@ -1,3 +1,5 @@
+// import 'dart:math';
+
 // import 'package:cloneapp/pages/home.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +19,7 @@
 //   final _workphone = TextEditingController();
 //   final _mobile = TextEditingController();
 //   final _address = TextEditingController();
+//   String _customerId = ''; 
 
 //   var currentuser = FirebaseAuth.instance.currentUser;
 
@@ -29,6 +32,7 @@
 //   .collection("USERS")
 //   .doc(currentuser!.uid)
 //   .collection("customers")
+  
 //   .add({
 //           "Salutation": salutation,
 //           "First Name": firstname,
@@ -37,6 +41,7 @@
 //           "Work-phone": workphone,
 //           "Mobile": mobile,
 //           "Address":address,
+//           "customerID":_customerId
 //         });
 //         print("Data entered successfully");
 //         _salutation.clear();
@@ -71,6 +76,23 @@
 //     }
 //   }
 
+// @override
+//   void initState() {
+//    _generateCustomerId();
+//     super.initState();
+//   }
+
+
+  // void _generateCustomerId() {
+  //   const length = 6;
+  //   const chars = 'ABC1234';
+  //   final random = Random();
+  //   setState(() {
+  //     _customerId = String.fromCharCodes(Iterable.generate(
+  //         length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+  //   });
+  // }
+
 //   @override
 //   void dispose() {
 //     _email.dispose();
@@ -90,7 +112,9 @@
 //         title: const Text("Add Customer"),
 //       ),
 //       drawer: drawer(context),
-//       body: Padding(
+//       body: SingleChildScrollView(
+//         child: 
+//       Padding(
 //         padding: const EdgeInsets.all(20.0),
 //         child: Column(
 //           crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,12 +310,15 @@
 //           ],
 //         ),
 //       ),
+//       )
 //     );
 //   }
 // }
 
 
 
+
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -307,6 +334,7 @@ class Customeradd extends StatefulWidget {
 }
 
 class _CustomeraddState extends State<Customeradd> {
+   final _formKey = GlobalKey<FormState>();
   final _salutation = TextEditingController();
   final _firstname = TextEditingController();
   final _lastname = TextEditingController();
@@ -316,19 +344,15 @@ class _CustomeraddState extends State<Customeradd> {
   final _address = TextEditingController();
 
   var currentUser = FirebaseAuth.instance.currentUser;
+  String _customerID ='';
+  
 
   @override
   void initState() {
     super.initState();
-    if (widget.customerData != null) {
-      _salutation.text = widget.customerData!["Salutation"] ?? "";
-      _firstname.text = widget.customerData!["First Name"] ?? "";
-      _lastname.text = widget.customerData!["Last Name"] ?? "";
-      _email.text = widget.customerData!["Email"] ?? "";
-      _workphone.text = widget.customerData!["Work-phone"]?.toString() ?? "";
-      _mobile.text = widget.customerData!["Mobile"]?.toString() ?? "";
-      _address.text = widget.customerData!["Address"] ?? "";
-    }
+    _generateCustomerId();
+    // _saveCustomer();
+    // _showErrorDialog("Some Error Occured");
   }
 
   Future<void> _saveCustomer() async {
@@ -355,7 +379,7 @@ class _CustomeraddState extends State<Customeradd> {
           .doc(currentUser!.uid)
           .collection("customers");
 
-      if (widget.customerData == null) {
+      
         await customersCollection.add({
           "Salutation": salutation,
           "First Name": firstname,
@@ -364,22 +388,24 @@ class _CustomeraddState extends State<Customeradd> {
           "Work-phone": workphone,
           "Mobile": mobile,
           "Address": address,
+          "customerID":_customerID,
         });
-      } else {
-        await customersCollection
-            .doc(widget.customerData!.id)
-            .update({
-              "Salutation": salutation,
-              "First Name": firstname,
-              "Last Name": lastname,
-              "Email": email,
-              "Work-phone": workphone,
-              "Mobile": mobile,
-              "Address": address,
-            })
-            .then((value) => print("Customer updated"))
-            .catchError((error) => print("Failed to update customer: $error"));
-      }
+      // } else {
+      //   await customersCollection
+      //       .doc(widget.customerData!.id)
+      //       .update({
+      //         "Salutation": salutation,
+      //         "First Name": firstname,
+      //         "Last Name": lastname,
+      //         "Email": email,
+      //         "Work-phone": workphone,
+      //         "Mobile": mobile,
+      //         "Address": address,
+      //         "customer":_customerID,
+      //       })
+      //       .then((value) => print("Customer updated"))
+      //       .catchError((error) => print("Failed to update customer: $error"));
+      // }
 
       // Clear text fields after saving
       _salutation.clear();
@@ -413,6 +439,18 @@ class _CustomeraddState extends State<Customeradd> {
     }
   }
   
+  
+  
+  void _generateCustomerId() {
+    const length = 6;
+    const chars = 'ABC1234';
+    final random = Random();
+    setState(() {
+      _customerID = String.fromCharCodes(Iterable.generate(
+          length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+    });
+  }
+
 void _showErrorDialog(String message) {
   showDialog(
     context: context,
@@ -445,18 +483,22 @@ void _showErrorDialog(String message) {
     super.dispose();
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Customer"),
+        title: const Text("Add customer"),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text('Customer ID : $_customerID ' ,  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5,),
               const Text(
                 'Customer Name:',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -471,11 +513,18 @@ void _showErrorDialog(String message) {
                       ),
                       child: TextFormField(
                         controller: _salutation,
+                        keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Salutation',
                           contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter salutation';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -489,11 +538,18 @@ void _showErrorDialog(String message) {
                       ),
                       child: TextFormField(
                         controller: _firstname,
+                        keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'First Name',
                           contentPadding: EdgeInsets.symmetric(horizontal: 6.0),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter first name';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -506,11 +562,18 @@ void _showErrorDialog(String message) {
                       ),
                       child: TextFormField(
                         controller: _lastname,
+                        keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Last Name',
                           contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter last name';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -528,11 +591,20 @@ void _showErrorDialog(String message) {
                 ),
                 child: TextFormField(
                   controller: _email,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Email',
                     contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an email address';
+                    } else if (!value.contains('@')) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
                 ),
               ),
               const SizedBox(height: 20),
@@ -547,6 +619,7 @@ void _showErrorDialog(String message) {
                 ),
                 child: TextFormField(
                   controller: _address,
+                  keyboardType: TextInputType.streetAddress,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Address',
@@ -569,12 +642,21 @@ void _showErrorDialog(String message) {
                       ),
                       child: TextFormField(
                         controller: _workphone,
+                        maxLength: 10,
                         keyboardType: TextInputType.phone,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Work Phone',
                           contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a phone number';
+                          } else if (value.length != 10) {
+                            return 'Phone number must be 10 digits';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -587,12 +669,21 @@ void _showErrorDialog(String message) {
                       ),
                       child: TextFormField(
                         controller: _mobile,
+                        maxLength: 10,
                         keyboardType: TextInputType.phone,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Mobile',
                           contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a phone number';
+                          } else if (value.length != 10) {
+                            return 'Phone number must be 10 digits';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),
@@ -600,6 +691,7 @@ void _showErrorDialog(String message) {
               ),
               const Divider(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: _saveCustomer,
@@ -624,15 +716,14 @@ void _showErrorDialog(String message) {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: const
- Text('Cancel', style: TextStyle(color: Colors.white)),
-                ),
-              ],
-            ),
-          ],
+                    child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-      )
     );
   }
 }

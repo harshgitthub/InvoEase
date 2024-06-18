@@ -53,7 +53,7 @@ class _ItemaddState extends State<Itemadd> {
       appBar: AppBar(
         title: const Text("Add Items"),
       ),
-      drawer: drawer(context),
+      // drawer: drawer(context),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -133,6 +133,7 @@ class _ItemaddState extends State<Itemadd> {
             ),
             const Divider(),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -141,7 +142,7 @@ class _ItemaddState extends State<Itemadd> {
                       int.tryParse(_sellingprice.text),
                       _description.text,
                     );
-                    Navigator.pushNamed(context, '/item');
+                    Navigator.pushNamed(context, '/invoice');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue, 

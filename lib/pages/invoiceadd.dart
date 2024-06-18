@@ -739,6 +739,7 @@ class _InvoiceaddState extends State<Invoiceadd> {
         "customerName": selectedCustomer,
         "customerAddress": customerData["Address"],
         "customerEmail": customerData["Email"],
+        "customerID":customerData["customerID"],
         "workphone": customerData["Work-phone"],
         "mobile": customerData["Mobile"],
         "invoiceId": _invoiceId,
@@ -782,19 +783,19 @@ Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
       title: const Text("Add Invoice"),
-      leading: Builder(
-        builder: (BuildContext context) {
-          return IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          );
-        },
-      ),
+      // leading: Builder(
+      //   builder: (BuildContext context) {
+      //     return IconButton(
+      //       icon: const Icon(Icons.menu),
+      //       onPressed: () {
+      //         Scaffold.of(context).openDrawer();
+      //       },
+      //       tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+      //     );
+      //   },
+      // ),
     ),
-    drawer: drawer(context), // Placeholder for your drawer
+    // drawer: drawer(context), // Placeholder for your drawer
     body: SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),

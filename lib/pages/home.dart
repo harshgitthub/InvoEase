@@ -59,17 +59,18 @@ class Home extends StatelessWidget {
 
 Drawer drawer(BuildContext context) {
   final currentUser = FirebaseAuth.instance.currentUser;
+
   return Drawer(
     child: StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection("USERS")
           .doc(currentUser!.uid)
           .collection("details")
-          .doc(currentUser!.uid)
+          .doc(currentUser.uid)
           .snapshots(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         } else {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
@@ -95,12 +96,12 @@ Drawer drawer(BuildContext context) {
             });
 
             // Return a placeholder or loading indicator until redirect
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           } else {
             var userData = snapshot.data!;
-            var organization = userData["Organisation Name"] ?? "No Organization";
-            var imageUrl = userData["Profile Image"]; // Assuming 'Profile Image' is the key for the image URL
-            var user = userData["Username"] ?? null;
+            var organization =
+                userData["Organisation Name"] ?? "No Organization";
+            var imageUrl = userData["Profile Image"];
 
             return ListView(
               padding: EdgeInsets.zero,
@@ -122,28 +123,22 @@ Drawer drawer(BuildContext context) {
                               radius: 30,
                               child: Icon(Icons.person, size: 30),
                             ),
-                    
+                      SizedBox(height: 8),
                       Text(
                         organization,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 26,
+                          fontSize: 20,
                         ),
                       ),
-                      Text(
-                        user,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                        ),
-                      ),
+                      SizedBox(height: 4),
+                      // Add other user information as needed
                     ],
                   ),
                 ),
-                const SizedBox(width: 7,),
                 ListTile(
-                  leading: const Icon(Icons.person),
-                  title: const Text(
+                  leading: Icon(Icons.person),
+                  title: Text(
                     'Customer',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
@@ -151,13 +146,13 @@ Drawer drawer(BuildContext context) {
                     Navigator.pushNamed(context, '/customeradd');
                   },
                 ),
-                const Divider(
+                Divider(
                   thickness: 2,
                   height: 3,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.home),
-                  title: const Text(
+                  leading: Icon(Icons.home),
+                  title: Text(
                     'Items',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
@@ -165,13 +160,13 @@ Drawer drawer(BuildContext context) {
                     Navigator.pushNamed(context, '/item');
                   },
                 ),
-                const Divider(
+                Divider(
                   thickness: 2,
                   height: 3,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.inbox_rounded),
-                  title: const Text(
+                  leading: Icon(Icons.inbox_rounded),
+                  title: Text(
                     'Invoices',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
@@ -179,13 +174,13 @@ Drawer drawer(BuildContext context) {
                     Navigator.pushNamed(context, '/invoice');
                   },
                 ),
-                const Divider(
+                Divider(
                   thickness: 2,
                   height: 3,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.note_add),
-                  title: const Text(
+                  leading: Icon(Icons.note_add),
+                  title: Text(
                     'Add Notes',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
@@ -193,13 +188,13 @@ Drawer drawer(BuildContext context) {
                     Navigator.pushNamed(context, '/note');
                   },
                 ),
-                const Divider(
+                Divider(
                   thickness: 2,
                   height: 3,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.expand),
-                  title: const Text(
+                  leading: Icon(Icons.expand),
+                  title: Text(
                     'Invoice Pdf',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
@@ -207,13 +202,13 @@ Drawer drawer(BuildContext context) {
                     Navigator.pushNamed(context, '/about');
                   },
                 ),
-                const Divider(
+                Divider(
                   thickness: 2,
                   height: 3,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text(
+                  leading: Icon(Icons.settings),
+                  title: Text(
                     'Settings',
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                   ),
@@ -221,7 +216,7 @@ Drawer drawer(BuildContext context) {
                     Navigator.pushNamed(context, '/setting');
                   },
                 ),
-                const Divider(
+                Divider(
                   thickness: 2,
                   height: 3,
                 ),

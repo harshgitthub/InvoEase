@@ -90,6 +90,7 @@ import 'package:cloneapp/pages/signup.dart';
 import 'package:cloneapp/pages/subpages/about.dart';
 import 'package:cloneapp/pages/subpages/addnotes.dart';
 import 'package:cloneapp/pages/subpages/billing.dart';
+import 'package:cloneapp/pages/subpages/invoicedata.dart';
 import 'package:cloneapp/pages/subpages/linkaccount.dart';
 import 'package:cloneapp/pages/subpages/notes.dart';
 import 'package:cloneapp/pages/subpages/organisation.dart';
@@ -146,6 +147,7 @@ class MyApp extends StatelessWidget {
         '/notesadd': (context) => const NotesAddScreen(),
         // '/link_account':(context)=>  LinkAccountScreen(),
         // '/applock':(context)=> const Applock(),
+        '/invoicetemplate':(context)=> const Invoicedata(),
       },
     );
   }

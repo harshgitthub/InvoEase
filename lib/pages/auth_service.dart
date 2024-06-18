@@ -294,4 +294,13 @@ class AuthService {
       reload();
     }
   }
+
+  Future<void> sendEmailverificationLink() async{
+    try{
+      await _auth.currentUser?.sendEmailVerification();
+    }
+  catch(e){
+    print(e.toString());
+  }
+  }
 }

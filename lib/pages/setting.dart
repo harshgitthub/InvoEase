@@ -49,6 +49,13 @@ class _SettingState extends State<Setting> {
                 Navigator.pushNamed(context, '/profile');
               },
             ),
+             ListTile(
+              leading: const Icon(Icons.my_library_add),
+                title: Text("Invoice Template"),
+                onTap: (){
+                    Navigator.pushNamed(context, '/invoicetemplate');
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.switch_access_shortcut),
               title: const Text('Switch Organisation'),

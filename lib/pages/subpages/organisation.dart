@@ -468,3 +468,125 @@
 //     );
 //   }
 // }
+
+
+// import 'package:flutter/material.dart';
+
+// class InvoiceTemplate extends StatefulWidget {
+//   const InvoiceTemplate({super.key});
+
+//   @override
+//   _InvoiceTemplateState createState() => _InvoiceTemplateState();
+// }
+
+// class _InvoiceTemplateState extends State<InvoiceTemplate> {
+//   String selectedTemplate = '';
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Select Invoice Template'),
+//       ),
+//       body: ListView(
+//         children: [
+//           ListTile(
+//             title: Text('Standard Template'),
+//             trailing: selectedTemplate == 'Standard' ? Icon(Icons.check, color: Colors.green) : null,
+//             onTap: () {
+//               setState(() {
+//                 selectedTemplate = 'Standard';
+//               });
+//             },
+//           ),
+//           ListTile(
+//             title: Text('Spreadsheet Template'),
+//             trailing: selectedTemplate == 'Spreadsheet' ? Icon(Icons.check, color: Colors.green) : null,
+//             onTap: () {
+//               setState(() {
+//                 selectedTemplate = 'Spreadsheet';
+//               });
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// void main() {
+//   runApp(MaterialApp(
+//     home: InvoiceTemplate(),
+//   ));
+// }
+
+import 'package:confetti/confetti.dart';
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: CelebrationPage(),
+    );
+  }
+}
+
+class CelebrationPage extends StatefulWidget {
+  @override
+  _CelebrationPageState createState() => _CelebrationPageState();
+}
+
+class _CelebrationPageState extends State<CelebrationPage> {
+  late ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 10));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Celebration'),
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                _confettiController.play();
+              },
+              child: Text('Celebrate!'),
+            ),
+          ),
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive, // start at a random direction
+            shouldLoop: false, // start again as soon as the animation is finished
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange,
+              Colors.purple
+            ], // manually specify the colors to be used
+          // define a custom shape/path.
+          ),
+        ],
+      ),
+    );
+  }
+
+  
+}

@@ -50,6 +50,10 @@ class _ItemsState extends State<Items> {
           },
         ),
         actions: [
+          IconButton(onPressed: (){
+            Navigator.pushNamed(context,'/itemadd');
+          }, icon: Icon(Icons.add),
+          tooltip: "Add Item",),
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
@@ -65,13 +69,13 @@ class _ItemsState extends State<Items> {
         ],
       ),
       drawer: drawer(context),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.amber,
-        onPressed: () {
-          Navigator.pushNamed(context, '/itemadd');
-        },
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.amber,
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/itemadd');
+      //   },
+      //   child: const Icon(Icons.add),
+      // ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("USERS")
@@ -126,7 +130,7 @@ class _ItemsState extends State<Items> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "Price: Rs ${doc["Selling Price"]}",
+                          "Price: ₹ ${doc["Selling Price"]}",
                           style: const TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.w500,
@@ -266,6 +270,7 @@ class ItemSearchDelegate extends SearchDelegate {
     return Container();
   }
 }
+
 
 class Edititem extends StatefulWidget {
   final String itemId;

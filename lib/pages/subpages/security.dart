@@ -16,6 +16,12 @@ class Security extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              // ListTile(
+              //   title: Text("Invoice Template"),
+              //   onTap: (){
+              //       Navigator.pushNamed(context, '/invoicetemplate');
+              //   },
+              // ),
             //  _buildCard(
             // title: 'App Lock',
             // subtitle: 'Set app lock to keep your data secure and add a layer of security',
@@ -23,7 +29,7 @@ class Security extends StatelessWidget {
             // onPressed: () {
             //   // Define the action that happens when the card is pressed
             // },
-             
+            //  ),
               _buildCard(
                 title: 'Send diagnostics and usage statistics',
                 icon: Icons.analytics,

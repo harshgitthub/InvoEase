@@ -96,6 +96,7 @@ class _InvoiceViewState extends State<InvoiceView> {
     );
   }
 
+
   Widget _buildInvoiceList(BuildContext context, bool? isPaid) {
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance
@@ -152,9 +153,10 @@ class _InvoiceViewState extends State<InvoiceView> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Date: ${invoice['invoiceDate']?.toString() ?? 'No invoice date'}' , style: TextStyle(fontSize: 15),),
-                Text('Due Date: $formattedDueDate',style: TextStyle(fontSize: 15)),
-                if (isOverdue) Text('Status: Overdue', style: TextStyle(color: Colors.red , fontSize: 15)),
+                Text('customer ID: ${invoice['customerID']?.toString() ?? ''}' , style: const TextStyle(fontSize: 15),),
+                Text('Date: ${invoice['invoiceDate']?.toString() ?? 'No invoice date'}' , style: const TextStyle(fontSize: 15),),
+                Text('Due Date: $formattedDueDate',style: const TextStyle(fontSize: 15)),
+                if (isOverdue) const Text('Status: Overdue', style: TextStyle(color: Colors.red , fontSize: 15)),
               ],
             ),
             trailing: Row(
@@ -178,7 +180,7 @@ class _InvoiceViewState extends State<InvoiceView> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
                     _deleteInvoice(currentUser!.uid, docId);
                   },

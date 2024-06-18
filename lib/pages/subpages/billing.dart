@@ -2800,6 +2800,7 @@ class _BillingPageState extends State<BillingPage> {
   void initState() {
     super.initState();
     _fetchAvailableItems();
+    
   }
 
   Future<void> _fetchAvailableItems() async {
@@ -3006,6 +3007,7 @@ double _calculateTax() {
         'Customer Name': widget.invoice['customerName'],
         'Customer Email': widget.invoice['customerEmail'],
         'Customer Address': widget.invoice['Address'],
+        'Customer ID:': widget.invoice['customerID'],
         'status': widget.invoice['status'],
         'Due Date': widget.invoice['dueDate'],
         'Invoice Date': DateTime.now(),
@@ -3085,6 +3087,7 @@ double _calculateTax() {
                     ),
                     const SizedBox(height: 8.0),
                     _buildInfoRow('Name:', widget.invoice['customerName'] ?? 'N/A'),
+                     _buildInfoRow('Customer ID:', widget.invoice['customerID'] ?? 'N/A'),
                     _buildInfoRow('Payment Status:', widget.invoice['status'] ?? 'N/A'),
                     _buildInfoRow('Email:', widget.invoice['customerEmail'] ?? 'N/A'),
                     _buildInfoRow('Address:', widget.invoice['customerAddress'] ?? 'N/A'),
@@ -3113,7 +3116,7 @@ Expanded(
       return ListTile(
         title: Text(item['description']),
         subtitle: Text('Qty: ${item['quantity']}'),
-        trailing: Text('\$${(item['quantity'] * item['price']).toStringAsFixed(2)}'),
+        trailing: Text('\₹${(item['quantity'] * item['price']).toStringAsFixed(2)}'),
         onTap: () {
           // Optionally implement an action when tapping on an item in the list
         },
@@ -3143,7 +3146,7 @@ ElevatedButton(
                       title: Text(item['description']),
                       subtitle: Text('Qty: ${item['quantity']}'),
                       trailing: Text(
-                        '\$${(item['quantity'] * item['price']).toStringAsFixed(2)}',
+                        '\₹${(item['quantity'] * item['price']).toStringAsFixed(2)}',
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
@@ -3166,7 +3169,7 @@ ElevatedButton(
                     'Subtotal:',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('\$${_calculateSubtotal().toStringAsFixed(2)}'),
+                  Text('\₹${_calculateSubtotal().toStringAsFixed(2)}'),
                 ],
               ),
               const SizedBox(height: 8.0),
@@ -3178,7 +3181,7 @@ ElevatedButton(
                     'Tax (${taxPercentage.toStringAsFixed(2)}%):',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('\$${_calculateTax().toStringAsFixed(2)}'),
+                  Text('\₹${_calculateTax().toStringAsFixed(2)}'),
                 ],
               ),
               const Divider(),
@@ -3190,7 +3193,7 @@ ElevatedButton(
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '\$${totalAmount.toStringAsFixed(2)}',
+                    '\₹${totalAmount.toStringAsFixed(2)}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
