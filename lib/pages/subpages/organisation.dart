@@ -558,7 +558,7 @@ class _CelebrationPageState extends State<CelebrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Celebration'),
+        title: const Text('Celebration'),
       ),
       body: Stack(
         children: [
@@ -567,7 +567,7 @@ class _CelebrationPageState extends State<CelebrationPage> {
               onPressed: () {
                 _confettiController.play();
               },
-              child: Text('Celebrate!'),
+              child: const Text('Celebrate!'),
             ),
           ),
           ConfettiWidget(

@@ -55,7 +55,7 @@
 // Allows read-only access to phone state, including the current cellular network information and status of any ongoing calls.
 
     <application
-        android:label="cloneapp"
+        android:label="InvoEase"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -149,7 +149,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloneapp/pages/auth_service.dart';
 class Users extends StatefulWidget {
-  const Users({Key? key}) : super(key: key);
+  const Users({super.key});
 
   @override
   State<Users> createState() => _UsersState();
@@ -203,7 +203,7 @@ class _UsersState extends State<Users> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Switch User"),
+        title: const Text("Switch User"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -216,7 +216,7 @@ class _UsersState extends State<Users> {
                 subtitle: Text(_currentUser!['email'] ?? 'No Email'),
                 onTap: () => _selectProfile(_currentUser!),
               ),
-              Divider(),
+              const Divider(),
             ],
             if (_linkedAccounts.isNotEmpty) ...[
               for (var account in _linkedAccounts) ...[
@@ -225,7 +225,7 @@ class _UsersState extends State<Users> {
                   subtitle: Text(account['email'] ?? 'No Email'),
                   onTap: () => _selectProfile(account),
                 ),
-                if (account != _linkedAccounts.last) Divider(),
+                if (account != _linkedAccounts.last) const Divider(),
               ],
             ],
           ],
@@ -233,7 +233,7 @@ class _UsersState extends State<Users> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToLinkAccountScreen,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

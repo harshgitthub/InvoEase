@@ -112,7 +112,7 @@ class _ProfileState extends State<Profile> {
         "Profile Image": imageUrl,
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.black,
           content: Text("Profile updated successfully!"),
         ),

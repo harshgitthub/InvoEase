@@ -290,7 +290,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Details extends StatefulWidget {
-  const Details({Key? key}) : super(key: key);
+  const Details({super.key});
 
   @override
   State<Details> createState() => _DetailsState();
@@ -396,7 +396,7 @@ class _DetailsState extends State<Details> {
       backgroundColor: Colors.blue,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Enter Details'),
+        title: const Text('Enter Details'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -407,7 +407,7 @@ class _DetailsState extends State<Details> {
             const SizedBox(height: 20),
             TextFormField(
               controller: _organisation,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.business),
                 labelText: 'Organisation',
                 filled: true,
@@ -423,7 +423,7 @@ class _DetailsState extends State<Details> {
             const SizedBox(height: 20),
             TextFormField(
               controller: _address,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.location_city),
                 labelText: 'Address',
                 filled: true,
@@ -440,7 +440,7 @@ class _DetailsState extends State<Details> {
             TextFormField(
               controller: _mobile,
               keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.phone),
                 labelText: 'Phone Number',
                 filled: true,
@@ -467,7 +467,7 @@ class _DetailsState extends State<Details> {
                   _selectedProfession = newValue;
                 });
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.work),
                 labelText: 'Profession',
                 filled: true,
@@ -489,14 +489,14 @@ class _DetailsState extends State<Details> {
                     CircleAvatar(
                       radius: 30,
                       backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-                      child: imageUrl == null ? Icon(Icons.person, size: 30) : null,
+                      child: imageUrl == null ? const Icon(Icons.person, size: 30) : null,
                     ),
                     Positioned(
                       right: 0,
                       bottom: 0,
                       child: GestureDetector(
                         onTap: pickImage,
-                        child: Icon(
+                        child: const Icon(
                           Icons.camera_alt,
                           color: Colors.white,
                           size: 20,
@@ -521,11 +521,11 @@ class _DetailsState extends State<Details> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Validation Error'),
-                        content: Text('Please fill in all the fields before proceeding.'),
+                        title: const Text('Validation Error'),
+                        content: const Text('Please fill in all the fields before proceeding.'),
                         actions: <Widget>[
                           TextButton(
-                            child: Text('OK'),
+                            child: const Text('OK'),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
@@ -536,7 +536,7 @@ class _DetailsState extends State<Details> {
                   );
                 }
               },
-              child: Text(
+              child: const Text(
                 'Save Details',
                 style: TextStyle(fontSize: 18),
               ),

@@ -52,7 +52,7 @@ class _ItemsState extends State<Items> {
         actions: [
           IconButton(onPressed: (){
             Navigator.pushNamed(context,'/itemadd');
-          }, icon: Icon(Icons.add),
+          }, icon: const Icon(Icons.add),
           tooltip: "Add Item",),
           IconButton(
             icon: const Icon(Icons.search),
@@ -353,79 +353,79 @@ class _EdititemState extends State<Edititem> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text("Edit Item"),
+      title: const Text("Edit Item"),
     ),
     body: Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          const Text(
             'Name ',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           TextFormField(
             controller: _itemname,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter Item Name',
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
           ),
-          SizedBox(height: 16),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             'Selling Price',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           TextFormField(
             controller: _sellingprice,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter Selling Price',
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
           ),
-          SizedBox(height: 16),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             'Description',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           TextFormField(
             controller: _description,
             maxLines: 3,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter Description',
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: updateUser,
-                  child: Text('Update Item'),
+                  child: const Text('Update Item'),
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
                   onPressed: deleteUserItem,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red, // Red color for delete button
                   ),
-                  child: Text('Delete Item' , style:  TextStyle(color: Colors.white),),
+                  child: const Text('Delete Item' , style:  TextStyle(color: Colors.white),),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -433,7 +433,7 @@ Widget build(BuildContext context) {
                 onPressed: () {
                   Navigator.pop(context); // Close the edit item page
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
             ],
           ),

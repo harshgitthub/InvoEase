@@ -2031,7 +2031,7 @@ class _CustomerpageState extends State<Customerpage> {
           //   },
           // );
         return  ListView.builder(
-  padding: EdgeInsets.all(10.0),
+  padding: const EdgeInsets.all(10.0),
   itemCount: filteredDocs.length,
   itemBuilder: (context, index) {
     var doc = filteredDocs[index];
@@ -2039,19 +2039,20 @@ class _CustomerpageState extends State<Customerpage> {
       onTap: () {
         // Handle the tap event here
         Navigator.pushNamed(context,
-        '/invoice'
+        '/invoiceadd'
           
           );
       },
     
 
-    child:  Card(
-      color: Color.fromARGB(255, 240, 207, 207),
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-        child: Row(
+    child:  ListTile(
+      
+      // color: const Color.fromARGB(255, 240, 207, 207),
+      // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+      // elevation: 0,
+      
+      contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+        subtitle:  Row(
           children: [
             Expanded(
               child: Column(
@@ -2131,11 +2132,14 @@ class _CustomerpageState extends State<Customerpage> {
                 ),
               ],
             ),
+            
           ],
         ),
+      
       ),
-    )
+      
     );
+    
   },
 );
 

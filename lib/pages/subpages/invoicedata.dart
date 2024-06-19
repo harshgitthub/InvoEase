@@ -106,7 +106,7 @@ class _InvoicedataState extends State<Invoicedata> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Terms and Conditions'),
+        title: const Text('Terms and Conditions'),
       ),
       body: ListView.builder(
         itemCount: termsAndConditions.length,
@@ -120,13 +120,13 @@ class _InvoicedataState extends State<Invoicedata> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   onPressed: () {
                     _showEditTermDialog(term);
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () {
                     deleteTermAndCondition(term.id);
                   },
@@ -140,7 +140,7 @@ class _InvoicedataState extends State<Invoicedata> {
         onPressed: () {
           _showAddTermDialog();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -152,17 +152,17 @@ class _InvoicedataState extends State<Invoicedata> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Add Term and Condition'),
+          title: const Text('Add Term and Condition'),
           content: TextField(
             controller: textController,
-            decoration: InputDecoration(hintText: 'Enter term and condition'),
+            decoration: const InputDecoration(hintText: 'Enter term and condition'),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -174,7 +174,7 @@ class _InvoicedataState extends State<Invoicedata> {
                 }
                 Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -190,18 +190,18 @@ class _InvoicedataState extends State<Invoicedata> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Term and Condition'),
+          title: const Text('Edit Term and Condition'),
           content: TextField(
             controller: textController,
             decoration:
-                InputDecoration(hintText: 'Edit term and condition'),
+                const InputDecoration(hintText: 'Edit term and condition'),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -211,7 +211,7 @@ class _InvoicedataState extends State<Invoicedata> {
                 }
                 Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );

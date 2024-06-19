@@ -59,7 +59,7 @@ class _InvoiceViewState extends State<InvoiceView> {
         currentUser: currentUser,
         onQueryChanged: (query) {
           // Defer the state update until after the build cycle completes
-          WidgetsBinding.instance!.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
             setState(() {
               _searchQuery = query;
             });

@@ -622,6 +622,7 @@
 
 
 
+
 import 'dart:math';
 import 'package:cloneapp/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -802,11 +803,11 @@ Widget build(BuildContext context) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Customer Name:",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("USERS")
@@ -815,11 +816,11 @@ Widget build(BuildContext context) {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No customers found.'));
+                  return const Center(child: Text('No customers found.'));
                 } else {
                   _customers = snapshot.data!.docs
                       .map((doc) => "${doc['Salutation']} ${doc['First Name']} ${doc['Last Name']}")
@@ -849,12 +850,12 @@ Widget build(BuildContext context) {
                 }
               },
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               "Invoice ID and Date:",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -866,21 +867,21 @@ Widget build(BuildContext context) {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Invoice ID:",
                             style: TextStyle(fontSize: 18),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             _invoiceId,
-                            style: TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   flex: 1,
                   child: Card(
@@ -890,14 +891,14 @@ Widget build(BuildContext context) {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Invoice Date:",
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             formattedDate,
-                            style: TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
@@ -906,12 +907,12 @@ Widget build(BuildContext context) {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               "Due Date:",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Card(
               elevation: 4,
               child: InkWell(
@@ -925,30 +926,30 @@ Widget build(BuildContext context) {
                         _selectedDate == null
                             ? 'Select Due Date'
                             : '${_selectedDate!.toLocal()}'.split(' ')[0],
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
-                      Icon(Icons.calendar_today),
+                      const Icon(Icons.calendar_today),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               "Payment Method:",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextFormField(
               onChanged: (value) {
                 _paymentMethod = value;
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter payment method',
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -958,26 +959,26 @@ Widget build(BuildContext context) {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: Text('Save', style: TextStyle(fontSize: 18 , color: Colors.white)),
+                  child: const Text('Save', style: TextStyle(fontSize: 18 , color: Colors.white)),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: Text('Cancel', style: TextStyle(fontSize: 18 , color:  Colors.white)  ),
+                  child: const Text('Cancel', style: TextStyle(fontSize: 18 , color:  Colors.white)  ),
                 ),
               ],
             ),

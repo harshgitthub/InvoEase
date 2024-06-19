@@ -225,6 +225,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+1"
+  firebase_app_check:
+    dependency: "direct main"
+    description:
+      name: firebase_app_check
+      sha256: "8aedc3b274826f923f2cf2d61cddeb014c113fd8604373e2fe3a2068b3f496e7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0+1"
+  firebase_app_check_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_app_check_platform_interface
+      sha256: "93e8aeeb5659c4926682299f175c033fd955fe3a2aa3b2c9a34c55af1ba25f10"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+31"
+  firebase_app_check_web:
+    dependency: transitive
+    description:
+      name: firebase_app_check_web
+      sha256: c2933fc26b73d02b791291df00446a6dbf99d1b59e038bb55cbbec74fcb40c4a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2+9"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -334,6 +358,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.1"
+  flutter_share:
+    dependency: "direct main"
+    description:
+      name: flutter_share
+      sha256: ae12c1cea13b35926a109824ffac601531e40cb94ad53eeae58625eceb3eaaaa
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -352,6 +384,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.7.0"
+  get:
+    dependency: "direct main"
+    description:
+      name: get
+      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.6"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -400,6 +440,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.12.4+1"
+  hive:
+    dependency: "direct main"
+    description:
+      name: hive
+      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
+  hive_flutter:
+    dependency: "direct main"
+    description:
+      name: hive_flutter
+      sha256: dca1da446b1d808a51689fb5d0c6c9510c0a2ba01e22805d492c73b68e33eecc
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   http:
     dependency: transitive
     description:
@@ -824,6 +880,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.4"
+  share_plus:
+    dependency: "direct main"
+    description:
+      name: share_plus
+      sha256: ef3489a969683c4f3d0239010cc8b7a2a46543a8d139e111c06c558875083544
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.0"
+  share_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: share_plus_platform_interface
+      sha256: "0f9e4418835d1b2c3ae78fdb918251959106cefdbc4dd43526e182f80e82f6d4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   shared_preferences:
     dependency: "direct main"
     description:

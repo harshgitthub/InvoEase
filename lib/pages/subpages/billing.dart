@@ -3116,7 +3116,7 @@ Expanded(
       return ListTile(
         title: Text(item['description']),
         subtitle: Text('Qty: ${item['quantity']}'),
-        trailing: Text('\₹${(item['quantity'] * item['price']).toStringAsFixed(2)}'),
+        trailing: Text('₹${(item['quantity'] * item['price']).toStringAsFixed(2)}'),
         onTap: () {
           // Optionally implement an action when tapping on an item in the list
         },
@@ -3146,7 +3146,7 @@ ElevatedButton(
                       title: Text(item['description']),
                       subtitle: Text('Qty: ${item['quantity']}'),
                       trailing: Text(
-                        '\₹${(item['quantity'] * item['price']).toStringAsFixed(2)}',
+                        '₹${(item['quantity'] * item['price']).toStringAsFixed(2)}',
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
@@ -3169,7 +3169,7 @@ ElevatedButton(
                     'Subtotal:',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('\₹${_calculateSubtotal().toStringAsFixed(2)}'),
+                  Text('₹${_calculateSubtotal().toStringAsFixed(2)}'),
                 ],
               ),
               const SizedBox(height: 8.0),
@@ -3181,7 +3181,7 @@ ElevatedButton(
                     'Tax (${taxPercentage.toStringAsFixed(2)}%):',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('\₹${_calculateTax().toStringAsFixed(2)}'),
+                  Text('₹${_calculateTax().toStringAsFixed(2)}'),
                 ],
               ),
               const Divider(),
@@ -3193,7 +3193,7 @@ ElevatedButton(
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '\₹${totalAmount.toStringAsFixed(2)}',
+                    '₹${totalAmount.toStringAsFixed(2)}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],

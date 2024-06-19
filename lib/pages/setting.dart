@@ -1,5 +1,10 @@
 import 'package:cloneapp/pages/home.dart';
+import 'package:cloneapp/pages/open.dart';
+import 'package:cloneapp/pages/subpages/pdf.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Setting extends StatefulWidget {
@@ -10,7 +15,28 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
+  final currentuser  = FirebaseAuth.instance.currentUser;
+
   String selectedEmoji = '';
+
+  Future<void> signout() async {
+  try {
+    await GoogleSignIn().signOut();
+    await FirebaseAuth.instance.signOut();
+    // Navigate to login screen or any other post-logout action
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const Open()),
+    );
+  } catch (e) {
+    // Handle sign-out errors
+    print('Error signing out: $e');
+    // Optionally, show an error message to the user
+    // Example: ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to sign out')));
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +77,7 @@ class _SettingState extends State<Setting> {
             ),
              ListTile(
               leading: const Icon(Icons.my_library_add),
-                title: Text("Invoice Template"),
+                title: const Text("Invoice Template"),
                 onTap: (){
                     Navigator.pushNamed(context, '/invoicetemplate');
                 },
@@ -139,11 +165,14 @@ class _SettingState extends State<Setting> {
       onTap: _launchEmail,
     
           ),
-         ListTile(
+          ListTile(
             leading: const Icon(Icons.share),
             title: const Text('Share'),
-            onTap: () {
-              
+            onTap: () async {
+              await FlutterShare.share(
+                title: 'Amazing Flutter App', 
+                text: 'Check out this awesome app: https://example.com/app-link', // replace by Playstore link
+              );
             },
           ),
           ListTile(
@@ -165,40 +194,39 @@ class _SettingState extends State<Setting> {
       ]),
     ));
   }
-
-  void _showLogoutConfirmationDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Logout'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Do you really want to logout?'),
-              ],
-            ),
+void _showLogoutConfirmationDialog(BuildContext context) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false, // User must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Logout'),
+        content: const SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Do you really want to sign out?'),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () {
-                // Perform logout action
-                Navigator.popUntil(context, ModalRoute.withName('/')); // Navigate to the initial route
-              },
-            ),
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Yes'),
+            onPressed: () {
+              signout(); // Call your signout function here
+            },
+          ),
+          TextButton(
+            child: const Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   void _showReviewDialog(BuildContext context) {
     showDialog<void>(
@@ -243,7 +271,7 @@ class _SettingState extends State<Setting> {
                 child: const Text('Submit'),
                 onPressed: () {
                   // Handle the submission logic
-                  print('Selected Emoji: $selectedEmoji');
+                  Text('Selected Emoji: ${selectedEmoji}');
                   Navigator.of(context).pop(); // Close the dialog
                 },
               ),

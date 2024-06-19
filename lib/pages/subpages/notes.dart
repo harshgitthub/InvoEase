@@ -77,7 +77,7 @@ class Notes extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-                        title: Text(task , style: TextStyle(fontSize:21 ),),
+                        title: Text(task , style: const TextStyle(fontSize:21 ),),
                         subtitle: Text(
                           '${dateTime.toLocal()}',
                           style: const TextStyle(fontSize: 18.0 , fontWeight: FontWeight.bold),
