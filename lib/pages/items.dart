@@ -1,4 +1,5 @@
 import 'package:cloneapp/pages/home.dart';
+import 'package:cloneapp/pages/invoice.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -328,7 +329,7 @@ class _EdititemState extends State<Edititem> {
             "Description": description,
           });
       print('Document updated successfully');
-      Navigator.pushNamed(context, '/item');
+      Navigator.of(context).push(_createRoute());
     } catch (e) {
       print('Error updating document: $e');
       // Handle error as needed
@@ -348,6 +349,7 @@ class _EdititemState extends State<Edititem> {
     print('Error deleting document: $e');
     // Handle error as needed
   }
+
 }
 @override
 Widget build(BuildContext context) {
@@ -442,5 +444,18 @@ Widget build(BuildContext context) {
     ),
   );
 }
+
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => InvoiceView(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+    );
+  }
 
 }

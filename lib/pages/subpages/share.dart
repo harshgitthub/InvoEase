@@ -1,7 +1,6 @@
 
 
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,8 +19,8 @@ class _ProfileState extends State<Profile> {
   final _organisation = TextEditingController();
   final _mobile = TextEditingController();
   final _address = TextEditingController();
-  final _username = TextEditingController();
-
+  final _gst = TextEditingController();
+  // final _propreitor = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
   String? imageUrl;
 
@@ -51,9 +50,10 @@ class _ProfileState extends State<Profile> {
 
     setState(() {
       _organisation.text = userDoc['Organisation Name'];
+      // _propreitor.text = userDoc["Proprietor"];
       _address.text = userDoc['Address'];
       _mobile.text = userDoc['Phone Number'].toString();
-      _username.text = userDoc['Username'];
+      _gst.text = userDoc['gst'];
       _selectedProfession = userDoc['Profession'];
       imageUrl = userDoc['Profile Image'];
     });
@@ -105,11 +105,13 @@ class _ProfileState extends State<Profile> {
           .doc(currentuser!.uid)
           .update({
         "Organisation Name": _organisation.text,
+        // "Propreitor":_propreitor.text,
         "Address": _address.text,
         "Phone Number": int.tryParse(_mobile.text),
-        "Username": _username.text,
+        "gst": _gst.text,
         "Profession": _selectedProfession,
         "Profile Image": imageUrl,
+        
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -139,7 +141,8 @@ class _ProfileState extends State<Profile> {
     _mobile.dispose();
     _address.dispose();
     _organisation.dispose();
-    _username.dispose();
+    _gst.dispose();
+    // _propreitor.dispose();
     super.dispose();
   }
 
@@ -156,7 +159,7 @@ class _ProfileState extends State<Profile> {
         child: Column(
           children: [
             const Text(
-              "Edit your details",
+              "Edit Details",
               style: TextStyle(color: Colors.black, fontSize: 20),
             ),
             const SizedBox(height: 20),
@@ -185,13 +188,15 @@ class _ProfileState extends State<Profile> {
               ],
             ),
             const SizedBox(height: 30),
-            buildTextField(_organisation, 'Organisation', Icons.business),
+            buildTextField(_organisation, 'Organisation / Proprietor Name', Icons.person),
             const SizedBox(height: 20),
+            //  buildTextField(_propreitor, 'Proprietor', Icons.business),
+            //  const SizedBox(height: 20,),
             buildTextField(_address, 'Address', Icons.location_city),
             const SizedBox(height: 20),
-            buildTextField(_mobile, 'Phone Number', Icons.phone),
+            buildTextField(_mobile, 'Mobile', Icons.phone),
             const SizedBox(height: 20),
-            buildTextField(_username, 'Username', Icons.person),
+            buildTextField(_gst, 'GST', Icons.account_balance),
             const SizedBox(height: 20),
             buildDropdownButton(),
             const SizedBox(height: 30),
@@ -257,3 +262,4 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
+

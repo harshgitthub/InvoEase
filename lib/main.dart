@@ -90,9 +90,14 @@ import 'package:cloneapp/pages/signup.dart';
 import 'package:cloneapp/pages/subpages/about.dart';
 import 'package:cloneapp/pages/subpages/addnotes.dart';
 import 'package:cloneapp/pages/subpages/billing.dart';
+import 'package:cloneapp/pages/subpages/designpage.dart';
 import 'package:cloneapp/pages/subpages/invoicedata.dart';
+import 'package:cloneapp/pages/subpages/linkaccount.dart';
 import 'package:cloneapp/pages/subpages/notes.dart';
+import 'package:cloneapp/pages/subpages/pdfgenerate.dart';
 import 'package:cloneapp/pages/subpages/settings/applock.dart';
+import 'package:cloneapp/pages/subpages/settings/password.dart';
+import 'package:cloneapp/pages/subpages/settings/pattern.dart';
 import 'package:cloneapp/pages/subpages/share.dart';
 import 'package:cloneapp/pages/subpages/users.dart';
 import 'package:cloneapp/pages/verify.dart';
@@ -153,7 +158,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const Login(),
         '/home': (context) => Home(),
         '/estimate': (context) => const Estimate(),
-        '/expense': (context) => const Expense(),
+        // '/expense': (context) => const Expense(),
         '/invoice': (context) => const InvoiceView(),
         '/paymentlink': (context) => const Paymentlink(),
         '/paymentreceive': (context) => const Paymentreceived(),
@@ -166,16 +171,19 @@ class MyApp extends StatelessWidget {
         '/itemadd': (context) => const Itemadd(),
         '/invoiceadd': (context) => const Invoiceadd(),
         '/profile': (context) => const Profile(),
-        '/security': (context) => const Applock(),
+        '/security': (context) =>  DialogExamplePage(),
         '/about': (context) => InvoiceScreen(),
-        '/users': (context) => const Users(),
+        // '/users': (context) =>  UsersScreen(),
         '/billingpage': (context) => BillingPage(invoice: invoice),
-        '/note': (context) => const Notes(),
+        '/note': (context) => const Calendar(),
         '/notesadd': (context) => const NotesAddScreen(),
-        // '/link_account':(context)=>  LinkAccountScreen(),
+        // '/link_account': (context) => LinkAccountScreen(),
         // '/applock':(context)=> const Applock(),
         '/invoicetemplate':(context)=> const Invoicedata(),
         '/verify':(context)=> const Verify(),
+        '/password':(context)=>  DesignPage(),
+        '/pw':(context)=>  CustomLoader(),
+        '/notepage':(context)=> Notes()
       },
     );
   }

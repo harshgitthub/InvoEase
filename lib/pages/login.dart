@@ -727,14 +727,14 @@ class _LoginState extends State<Login> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              "Hello There!",
+              "WELCOME",
               style: TextStyle(
                   fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             const Text(
-              "LOGIN TO YOUR ACCOUNT",
+              "Login To Your Account",
               style: TextStyle(color: Colors.white, fontSize: 20),
               textAlign: TextAlign.center,
             ),
@@ -748,7 +748,7 @@ class _LoginState extends State<Login> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(10),
                   borderSide: const BorderSide(color: Colors.blue, width: 2),
                 ),
               ),
@@ -772,7 +772,7 @@ class _LoginState extends State<Login> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(10),
                   borderSide: const BorderSide(color: Colors.blue, width: 2),
                 ),
               ),
@@ -795,7 +795,7 @@ class _LoginState extends State<Login> {
                 ),
                 const Text(
                   'Remember me',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white , fontSize: 15),
                 ),
                 const Spacer(),
                 TextButton(
@@ -804,7 +804,7 @@ class _LoginState extends State<Login> {
                   },
                   child: const Text(
                     'Forgot Password?',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white , fontSize: 15),
                   ),
                 ),
               ],
@@ -820,7 +820,7 @@ class _LoginState extends State<Login> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
@@ -830,25 +830,25 @@ class _LoginState extends State<Login> {
               children: [
                 IconButton(
                   onPressed: () => _loginWithGoogle(),
-                  icon: const FaIcon(FontAwesomeIcons.google, color: Colors.amber),
+                  icon: const FaIcon(FontAwesomeIcons.google, color: Colors.white),
                 ),
                 IconButton(
                   onPressed: () {
                     // Implement sign-in with Facebook
                   },
-                  icon: const FaIcon(FontAwesomeIcons.facebook, color: Colors.amber),
+                  icon: const FaIcon(FontAwesomeIcons.facebook, color: Colors.white),
                 ),
                 IconButton(
                   onPressed: () {
                     // Implement sign-in with Twitter
                   },
-                  icon: const FaIcon(FontAwesomeIcons.twitter, color: Colors.amber),
+                  icon: const FaIcon(FontAwesomeIcons.twitter, color: Colors.white),
                 ),
                 IconButton(
                   onPressed: () {
                     // Implement sign-in with Microsoft
                   },
-                  icon: const FaIcon(FontAwesomeIcons.microsoft, color: Colors.amber),
+                  icon: const FaIcon(FontAwesomeIcons.microsoft, color: Colors.white),
                 ),
               ],
             ),

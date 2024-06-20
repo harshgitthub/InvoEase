@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Calendar extends StatelessWidget {
-  const Calendar({super.key});
+class Notes extends StatelessWidget {
+  const Notes({super.key});
 
   Future<void> _deleteNote(String noteId) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -13,7 +13,7 @@ class Calendar extends StatelessWidget {
       await FirebaseFirestore.instance
           .collection('USERS')
           .doc(user.uid)
-          .collection('calendar')
+          .collection('notes')
           .doc(noteId)
           .delete();
     }
@@ -25,7 +25,7 @@ class Calendar extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Calendar"),
+        title: const Text("Notes"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -41,7 +41,7 @@ class Calendar extends StatelessWidget {
       drawer: drawer(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/taskadd');
+          Navigator.pushNamed(context, '/notesadd');
         },
         child: const Icon(Icons.add),
       ),
@@ -50,7 +50,7 @@ class Calendar extends StatelessWidget {
               stream: FirebaseFirestore.instance
                   .collection('USERS')
                   .doc(user.uid)
-                  .collection('calendar')
+                  .collection('notes')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

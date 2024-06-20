@@ -244,7 +244,7 @@ class Signup extends StatelessWidget {
 
           children: [
             const SizedBox(height: 200,),
-            const Text("SIGNUP TO CONTINUE", style: TextStyle(color: Colors.white, fontSize: 20)),
+            const Text("Signup To Continue", style: TextStyle(color: Colors.white, fontSize: 20)),
             const SizedBox(height: 10,),
             TextFormField(
               controller: _emailController,
@@ -253,7 +253,7 @@ class Signup extends StatelessWidget {
                 hintText: 'Email',
                 hintStyle: TextStyle(color: Colors.grey[400]),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 fillColor: Colors.white,
                 filled: true,
@@ -274,7 +274,7 @@ class Signup extends StatelessWidget {
                 hintStyle: TextStyle(color: Colors.grey[400]),
                 prefixIcon: const Icon(Icons.lock, color: Colors.blue,),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 fillColor: Colors.white,
                 filled: true,
@@ -338,16 +338,21 @@ class Signup extends StatelessWidget {
       Get.snackbar('Error', 'An unexpected error occurred');
     }
   },
-  style: ElevatedButton.styleFrom(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+  style: OutlinedButton.styleFrom(
+    padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 15),
+    backgroundColor: Colors.white,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(3),
+    
+      borderRadius: BorderRadius.circular(10),
     ),
   ),
-  icon: const Icon(Icons.person_add, color: Colors.blue),
+  
   label: const Text(
-    'Sign up',
-    style: TextStyle(color: Colors.blue, fontSize: 18),
+    'Sign-Up',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                      ),
   ),
 )
           ],

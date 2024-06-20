@@ -96,22 +96,22 @@ class _SettingState extends State<Setting> {
                 Navigator.pushNamed(context, '/users');
               },
             ),
-        //     ListTile(
-        //       leading: const Icon(Icons.room_preferences),
-        //       title: const Text('Preferences'),
-        //       onTap: () {
-        //         // Add functionality for this list tile
-        //       },
-        //     ),
+            ListTile(
+              leading: const Icon(Icons.room_preferences),
+              title: const Text('Preferences'),
+              onTap: () {
+               Navigator.pushNamed(context, '/password');
+              },
+            ),
 
-        //     const Divider(),
-        //   ListTile(
-        //     leading: const Icon(Icons.currency_bitcoin),
-        //     title: const Text('Currencies'),
-        //     onTap: () {
-              
-        //     },
-        //   ),
+          //   const Divider(),
+          // ListTile(
+          //   leading: const Icon(Icons.currency_bitcoin),
+          //   title: const Text('Currencies'),
+          //   onTap: () {
+          //     Navigator.pushNamed(context, '/pw');
+          //   },
+          // ),
         //   ListTile(
         //     leading: const Icon(Icons.percent_rounded),
         //     title: const Text('Taxes'),

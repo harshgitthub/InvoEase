@@ -66,6 +66,12 @@ dependencies:
   share_plus: ^9.0.0
   flutter_share: ^2.0.0
   firebase_app_check: ^0.3.0+1
+  awesome_dialog: ^3.2.1
+  loading_animation_widget: ^1.2.1
+  drag_and_drop: ^1.0.0
+  flutter_resizable_container: ^2.0.0
+  flutter_animated_button: ^2.0.3
+  animated_button: ^0.2.0
 
 dev_dependencies:
   flutter_test:

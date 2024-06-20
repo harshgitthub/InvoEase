@@ -227,122 +227,149 @@ class Home extends StatelessWidget {
 //   );
 // }
 
+
+
+
 Drawer drawer(BuildContext context) {
   final currentUser = FirebaseAuth.instance.currentUser;
-
   return Drawer(
-    child: StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection("USERS")
-          .doc(currentUser?.uid) // Use ?. operator to access uid safely
-          .collection("details")
-          .doc(currentUser?.uid) // Use ?. operator to access uid safely
-          .snapshots(),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text("Missing Details"),
-                  content: const Text("Please complete your profile details."),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('Go to Profile'),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                        Navigator.pushNamed(context, '/details');
-                      },
-                    ),
-                  ],
-                ),
-              );
-            });
-
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            var userData = snapshot.data!;
-            var organization = userData["Organisation Name"] ?? "No Organization";
-            var imageUrl = userData["Profile Image"];
-
-            return ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
+  child: StreamBuilder(
+    stream: FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser?.uid)
+        .collection("details")
+        .doc(currentUser?.uid)
+        .snapshots(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (!snapshot.hasData || !snapshot.data!.exists) {
+          WidgetsBinding.instance!.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text("Missing Details"),
+                content: const Text("Please complete your profile details."),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Go to Profile'),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.pushNamed(context, '/details');
+                    },
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
+                ],
+              ),
+            );
+          });
+
+          return Center(child: CircularProgressIndicator());
+        } else {
+          var userData = snapshot.data!;
+          var organization = userData["Organisation Name"] ?? "No Organization";
+          var imageUrl = userData["Profile Image"];
+
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                      child: CircleAvatar(
                         radius: 35,
-                        backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
+                        backgroundImage: imageUrl != null
+                            ? NetworkImage(imageUrl)
+                            : null,
                         child: imageUrl == null
-                            ? const Icon(Icons.person, size: 30, color: Colors.white)
+                            ? Icon(Icons.person, size: 30, color: Colors.white)
                             : null,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                      
+                      label: Text(
                         organization,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                buildListTile(
-                  Icons.person,
-                  'Customer',
-                  '/customeradd',
-                  context,
-                ),
-                buildListTile(
-                  Icons.home,
-                  'Items',
-                  '/item',
-                  context,
-                ),
-                buildListTile(
-                  Icons.inbox_rounded,
-                  'Invoices',
-                  '/invoice',
-                  context,
-                ),
-                buildListTile(
-                  Icons.note_add,
-                  'Add Notes',
-                  '/note',
-                  context,
-                ),
-                buildListTile(
-                  Icons.expand,
-                  'Invoice Pdf',
-                  '/about',
-                  context,
-                ),
-                buildListTile(
-                  Icons.settings,
-                  'Settings',
-                  '/setting',
-                  context,
-                ),
-              ],
-            );
-          }
+              ),
+              buildListTile(
+                Icons.home_filled,
+                'Home',
+                '',
+                context,
+              ),
+              buildListTile(
+                Icons.person,
+                'Customers',
+                '/customeradd',
+                context,
+              ),
+              buildListTile(
+                Icons.list,
+                'Items',
+                '/item',
+                context,
+              ),
+              buildListTile(
+                Icons.inbox_rounded,
+                'Invoices',
+                '/invoice',
+                context,
+              ),
+              buildListTile(
+                Icons.calendar_month,
+                'Calendar',
+                '/note',
+                context,
+              ),
+              buildListTile(
+                Icons.notes,
+                'Notes',
+                '/notepage',
+                context,
+              ),
+              buildListTile(
+                Icons.expand,
+                'Pdf',
+                '/about',
+                context,
+              ),
+              buildListTile(
+                Icons.settings,
+                'Settings',
+                '/setting',
+                context,
+              ),
+            ],
+          );
         }
-      },
-    ),
-  );
+      }
+    },
+  ),
+);
 }
 
 Widget buildListTile(

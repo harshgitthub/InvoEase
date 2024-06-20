@@ -208,26 +208,26 @@ class AuthService {
     }
   }
 
-  // Method to fetch the current authenticated user
-   Future<Map<String, dynamic>?> fetchCurrentUser() async {
-    try {
-      User? user = _auth.currentUser;
-      if (user != null) {
-        // Convert User object to a Map<String, dynamic>
-        Map<String, dynamic> userData = {
-          'uid': user.uid,
-          'email': user.email,
-          // Add other user-related data as needed
-        };
-        return userData;
-      } else {
-        return null; // Return null if no user is signed in
-      }
-    } catch (e) {
-      print("Error fetching current user: $e");
-      return null;
-    }
-  }
+  // // Method to fetch the current authenticated user
+  //  Future<Map<String, dynamic>?> fetchCurrentUser() async {
+  //   try {
+  //     User? user = _auth.currentUser;
+  //     if (user != null) {
+  //       // Convert User object to a Map<String, dynamic>
+  //       Map<String, dynamic> userData = {
+  //         'uid': user.uid,
+  //         'email': user.email,
+  //         // Add other user-related data as needed
+  //       };
+  //       return userData;
+  //     } else {
+  //       return null; // Return null if no user is signed in
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching current user: $e");
+  //     return null;
+  //   }
+  // }
 
   // Method to link email and password to current user
   Future<void> linkEmailAndPassword(String email, String password) async {
@@ -237,63 +237,77 @@ class AuthService {
         AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
         await user.linkWithCredential(credential);
       } else {
-        print("No user is currently signed in.");
+        throw Exception("No user is currently signed in.");
       }
     } catch (e) {
-      print("Error linking credentials: $e");
+      throw Exception("Error linking credentials: $e");
     }
   }
 
-  // Method to fetch linked accounts from Firestore
- Future<List<Map<String, dynamic>>> fetchLinkedAccounts() async {
-  try {
-    User? currentUser = _auth.currentUser;
-    List<Map<String, dynamic>> linkedAccounts = [];
-
-    if (currentUser != null) {
-      QuerySnapshot linkedAccountsSnapshot = await _firestore
-          .collection('USERS')
-          .doc(currentUser.uid)
-          .collection('profiles')
-          .get();
-
-      linkedAccounts = linkedAccountsSnapshot.docs.map((doc) => {
-        'id': doc.id,
-        ...doc.data() as Map<String, dynamic>,
-      }).toList();
-    }
-
-    return linkedAccounts;
-  } catch (e) {
-    print("Error fetching linked accounts: $e");
-    return [];
-  }
-}
-
-
-  // Method to add a user profile to Firestore
-  Future<void> addUserProfile(String name, String email, String password) async {
+  // Fetch the current user details
+  Future<Map<String, dynamic>?> fetchCurrentUser() async {
     try {
-      User? currentUser = _auth.currentUser;
-      if (currentUser != null) {
-        await _firestore.collection('USERS').doc(currentUser.uid).collection('profiles').add({
-          'name': name,
-          'email': email,
-          'password': password,
-        });
+      User? user = _auth.currentUser;
+      if (user != null) {
+        return {
+          'uid': user.uid,
+          'email': user.email,
+          'name': user.displayName ?? 'No Name',
+        };
       }
+      return null;
     } catch (e) {
-      print("Error adding user profile: $e");
+      throw Exception('Error fetching current user: $e');
     }
   }
+
+  // Fetch linked accounts
+  Future<List<Map<String, dynamic>>> fetchLinkedAccounts() async {
+    try {
+      User? user = _auth.currentUser;
+      List<Map<String, dynamic>> linkedAccounts = [];
+
+      if (user != null) {
+        for (UserInfo provider in user.providerData) {
+          linkedAccounts.add({
+            'uid': provider.uid,
+            'email': provider.email,
+            'name': provider.displayName ?? 'No Name',
+            'providerId': provider.providerId,
+          });
+        }
+      }
+      return linkedAccounts;
+    } catch (e) {
+      throw Exception('Error fetching linked accounts: $e');
+    }
+  }
+
+
+
+  // // Method to add a user profile to Firestore
+  // Future<void> addUserProfile(String name, String email, String password) async {
+  //   try {
+  //     User? currentUser = _auth.currentUser;
+  //     if (currentUser != null) {
+  //       await _firestore.collection('USERS').doc(currentUser.uid).collection('profiles').add({
+  //         'name': name,
+  //         'email': email,
+  //         'password': password,
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print("Error adding user profile: $e");
+  //   }
+  // }
 
   // Utility method to check current user and execute a function
-  void checkCurrentUserAndReload(Function reload) {
-    User? currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      reload();
-    }
-  }
+  // void checkCurrentUserAndReload(Function reload) {
+  //   User? currentUser = _auth.currentUser;
+  //   if (currentUser != null) {
+  //     reload();
+  //   }
+  // }
 
   Future<void> sendEmailverificationLink() async{
     try{

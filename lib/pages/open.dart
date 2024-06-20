@@ -214,6 +214,7 @@
 //       ),
 //     )
 
+
 import 'package:flutter/material.dart';
 
 class Open extends StatelessWidget {
@@ -232,7 +233,7 @@ class Open extends StatelessWidget {
                 children: [
                   const SizedBox(height: 100),
                   const Text(
-                    'Welcome!',
+                    'G-INVOICE',
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -242,24 +243,33 @@ class Open extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Manage your Invoice efficiently',
+                    'Easy, Efficient, Eco-friendly ',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
-                      fontSize: 16,
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                   const Text(
+                    'Billing Solutions',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 20,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 5),
-                  const Text(
-                    'Login or Signup to continue',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
+                  // const Text(
+                  //   'Login or Signup to continue',
+                  //   textAlign: TextAlign.center,
+                  //   style: TextStyle(
+                  //     fontStyle: FontStyle.italic,
+                  //     fontSize: 16,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
                   const SizedBox(height: 200),
                   ElevatedButton(
                     onPressed: () {
@@ -268,12 +278,12 @@ class Open extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       backgroundColor: Colors.white,
                     ),
                     child: const Text(
-                      'Login',
+                      'Log-In',
                       style: TextStyle(
                         color: Colors.blue,
                         fontSize: 18,
@@ -289,14 +299,14 @@ class Open extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 10),
                       side: const BorderSide(color: Colors.white),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     child: const Text(
-                      'Sign up',
+                      'Sign-Up',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 16,
                       ),
                     ),
                   ),

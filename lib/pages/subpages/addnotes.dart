@@ -138,10 +138,11 @@ class _NotesAddScreenState extends State<NotesAddScreen> {
             const SizedBox(height: 16.0),
             Row(
               children: <Widget>[
+                
                 Expanded(
                   child: Text(
                     _selectedDate == null
-                        ? 'No date chosen!'
+                        ? ''
                         : 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
                     style: const TextStyle(fontSize: 16.0),
                   ),
@@ -158,7 +159,7 @@ class _NotesAddScreenState extends State<NotesAddScreen> {
                 Expanded(
                   child: Text(
                     _selectedTime == null
-                        ? 'No time chosen!'
+                        ? ''
                         : 'Time: ${_selectedTime!.hour}:${_selectedTime!.minute}',
                     style: const TextStyle(fontSize: 16.0),
                   ),

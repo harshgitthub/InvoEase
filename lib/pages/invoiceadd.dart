@@ -643,12 +643,12 @@ class _InvoiceaddState extends State<Invoiceadd> {
   DateTime? _selectedDate;
   List<String> _customers = [];
   String? selectedCustomer;
-  String _paymentMethod = '';
+  String? _paymentMethod ;
   String _review = '';
   final Set<String> _selectedProcedures = {}; // Changed to Set for multi-selection
 
   final currentuser = FirebaseAuth.instance.currentUser;
-
+  final List<String> _paymentMethods = ['Credit Card', 'Debit Card', 'Phonpe', 'Bank Transfer'];
   @override
   void initState() {
     super.initState();
@@ -730,6 +730,7 @@ class _InvoiceaddState extends State<Invoiceadd> {
       }
 
       var customerData = snapshot.docs.first.data() as Map<String, dynamic>;
+      Timestamp now = Timestamp.now();
 
       await FirebaseFirestore.instance
           .collection("USERS")
@@ -737,6 +738,8 @@ class _InvoiceaddState extends State<Invoiceadd> {
           .collection("invoices")
           .doc(_invoiceId)
           .set({
+
+            
         "customerName": selectedCustomer,
         "customerAddress": customerData["Address"],
         "customerEmail": customerData["Email"],
@@ -744,7 +747,7 @@ class _InvoiceaddState extends State<Invoiceadd> {
         "workphone": customerData["Work-phone"],
         "mobile": customerData["Mobile"],
         "invoiceId": _invoiceId,
-        "invoiceDate": formattedDate,
+        "invoiceDate": now,
         "paymentMethod": _paymentMethod,
         "review": _review,
         "dueDate": _selectedDate,
@@ -769,7 +772,7 @@ class _InvoiceaddState extends State<Invoiceadd> {
         ),
       );
       print("Invoice saved successfully!");
-    } catch (e) {
+    } catch (e){
       print("Error saving invoice: $e");
     }
   }
@@ -784,6 +787,15 @@ Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
       title: const Text("Add Invoice"),
+      actions: [
+        IconButton(
+            icon: const Icon(Icons.person_add),
+            onPressed: () {
+              Navigator.pushNamed(context, '/customer');
+            },
+            tooltip: "Add customer",
+          ),
+      ],
       // leading: Builder(
       //   builder: (BuildContext context) {
       //     return IconButton(
@@ -893,7 +905,7 @@ Widget build(BuildContext context) {
                         children: [
                           const Text(
                             "Invoice Date:",
-                            style: const TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 18),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -936,19 +948,28 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Payment Method:",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              onChanged: (value) {
-                _paymentMethod = value;
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter payment method',
-              ),
-            ),
+          "Payment Method:",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+         const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _paymentMethod,
+          onChanged: (value) {
+            setState(() {
+              _paymentMethod = value;
+            });
+          },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Select payment method',
+          ),
+          items: _paymentMethods.map((String method) {
+            return DropdownMenuItem<String>(
+              value: method,
+              child: Text(method),
+            );
+          }).toList(),
+        ),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
