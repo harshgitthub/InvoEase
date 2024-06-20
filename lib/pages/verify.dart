@@ -1,52 +1,11 @@
-// import 'package:cloneapp/pages/wrapper.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-
-// class Verify extends StatefulWidget {
-//   const Verify({super.key});
-
-//   @override
-//   State<Verify> createState() => _VerifyState();
-// }
-
-// class _VerifyState extends State<Verify> {
-
-//  @override
-//   void initState() {
-//     sendverifyLink();
-//     super.initState();
-//   }
-
-//   sendverifyLink()async{
-//     final user = FirebaseAuth.instance.currentUser!;
-//     await user.sendEmailVerification().then((value)=>{
-//       Get.snackbar('Link sent',"a link has been sent to your email" , margin: EdgeInsets.all(10))
-//     });
-//   }
-
-//   reload()async{
-//     await FirebaseAuth.instance.currentUser!.reload().then((value)=>{Get.offAll(Wrapper())});
-//   }
-
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//     body: ElevatedButton(onPressed:(()=>reload()), child: Text("continue"))
-//     );
-//   }
-// }
-
-
-import 'package:cloneapp/pages/details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloneapp/pages/details.dart';
 import 'package:cloneapp/pages/wrapper.dart';
 
 class Verify extends StatefulWidget {
-  const Verify({super.key});
+  const Verify({Key? key}) : super(key: key);
 
   @override
   State<Verify> createState() => _VerifyState();
@@ -82,11 +41,17 @@ class _VerifyState extends State<Verify> {
   }
 
   Future<void> reload() async {
-    await FirebaseAuth.instance.currentUser!.reload();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const Details()),
-    );
+    final user = FirebaseAuth.instance.currentUser!;
+    await user.reload();
+    if (user.emailVerified) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Details()),
+      );
+    } else {
+      Get.snackbar('Email not verified', "Please verify your email before proceeding", margin: const EdgeInsets.all(10));
+      // You might want to resend the verification link or handle this case differently
+    }
   }
 
   @override
