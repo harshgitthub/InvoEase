@@ -753,6 +753,7 @@ class _InvoiceViewState extends State<InvoiceView> {
       },
     );
   }
+    
 
   void _deleteInvoice(String userId, String docId) async {
     await FirebaseFirestore.instance

@@ -1,10 +1,10 @@
 import 'dart:math';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class Customeradd extends StatefulWidget {
   final DocumentSnapshot? customerData;
@@ -24,6 +24,9 @@ class _CustomeraddState extends State<Customeradd> {
   final _workphone = TextEditingController();
   final _mobile = TextEditingController();
   final _address = TextEditingController();
+  final _remarks = TextEditingController();
+  final _salesperson = TextEditingController();
+
   bool isEmail = false;
   bool isFocused = false;
   bool isPhoneValid = true;
@@ -53,6 +56,9 @@ class _CustomeraddState extends State<Customeradd> {
     _workphone.dispose();
     _address.dispose();
     _salutation.dispose();
+    _remarks.dispose();
+    _salesperson.dispose();
+    
     super.dispose();
   }
 
@@ -62,6 +68,7 @@ class _CustomeraddState extends State<Customeradd> {
       isPhoneValid = value.isEmpty || (value.length == 10 && int.tryParse(value) != null);
     });
   }
+
     void _checkIsPhoneValid2() {
     final value = _mobile.text.trim();
     setState(() {
@@ -89,99 +96,31 @@ void _checkIsEmail() {
   });
 
 }
+Future<void> _saveCustomer() async {
+  String salutation = _salutation.text.trim();
+  String firstname = _firstname.text.trim();
+  String lastname = _lastname.text.trim();
+  String remarks= _remarks.text.trim();
+  String salesperson = _salesperson.text.trim();
+  String email = _email.text.trim();
+  String address = _address.text.trim();
+  int? workphone = int.tryParse(_workphone.text.trim());
+  int? mobile = int.tryParse(_mobile.text.trim());
 
+  if (firstname.isEmpty || !RegExp(r'^[a-zA-Z]+$').hasMatch(firstname) ) {
+    _showErrorDialog(context, "Please fill the required details with valid first name.");
+    return;
+  }
+  if (mobile==null) {
+    _showErrorDialog(context, "Please fill the mobile number field");
+    return;
+  }
 
-  Future<void> _saveCustomer() async {
-    String? salutation = _salutation.text.trim();
-    String? firstname = _firstname.text.trim();
-    String? lastname = _lastname.text.trim();
-    String? email = _email.text.trim();
-    String? address = _address.text.trim();
-    int? workphone = int.tryParse(_workphone.text.trim());
-    int? mobile = int.tryParse(_mobile.text.trim());
-
-    if (
-        firstname == "" ||
-        lastname == "" ||
-        mobile==null
-         ) {
-          _showErrorDialog(context, "An error has occured");
-      return;
-    }
-
-
-
-  //   try {
-  //     CollectionReference customersCollection = FirebaseFirestore.instance
-  //         .collection("USERS")
-  //         .doc(currentUser!.uid)
-  //         .collection("customers");
-
-      
-  //       await customersCollection.add({
-  //         "Salutation": salutation,
-  //         "First Name": firstname,
-  //         "Last Name": lastname,
-  //         "Email": email,
-  //         "Work-phone": workphone,
-  //         "Mobile": mobile,
-  //         "Address": address,
-  //         "customerID":_customerID,
-  //       });
-  //     // } else {
-  //     //   await customersCollection
-  //     //       .doc(widget.customerData!.id)
-  //     //       .update({
-  //     //         "Salutation": salutation,
-  //     //         "First Name": firstname,
-  //     //         "Last Name": lastname,
-  //     //         "Email": email,
-  //     //         "Work-phone": workphone,
-  //     //         "Mobile": mobile,
-  //     //         "Address": address,
-  //     //         "customer":_customerID,
-  //     //       })
-  //     //       .then((value) => print("Customer updated"))
-  //     //       .catchError((error) => print("Failed to update customer: $error"));
-  //     // }
-
-  //     // Clear text fields after saving
-  //     _salutation.clear();
-  //     _firstname.clear();
-  //     _lastname.clear();
-  //     _email.clear();
-  //     _workphone.clear();
-  //     _mobile.clear();
-  //     _address.clear();
-
-  //     // Show success dialog
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) => AlertDialog(
-  //         title: const Text('Success'),
-  //         content: const Text('Customer data saved successfully'),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('OK'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //               Navigator.pushNamed(context, '/customeradd');
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     print("Error: $e");
-  //     // Handle error, show error dialog or snackbar
-  //   }
-  // }
   try {
     CollectionReference customersCollection = FirebaseFirestore.instance
         .collection("USERS")
         .doc(currentUser!.uid)
         .collection("customers");
-        
 
     Timestamp now = Timestamp.now(); // Get current timestamp
 
@@ -189,6 +128,8 @@ void _checkIsEmail() {
       "Salutation": salutation,
       "First Name": firstname,
       "Last Name": lastname,
+      "Remarks": remarks,
+      "Salesperson": salesperson,
       "Email": email,
       "Work-phone": workphone,
       "Mobile": mobile,
@@ -205,29 +146,33 @@ void _checkIsEmail() {
     _workphone.clear();
     _mobile.clear();
     _address.clear();
+    _remarks.clear();
+    _salesperson.clear();
 
-    // Show success dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Success'),
-        content: const Text('Customer data saved successfully'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(context, '/customeradd');
-            },
-          ),
-        ],
+    // Navigate to invoiceadd screen with data
+    Navigator.pushNamed(
+      context,
+      '/invoiceadd',
+      arguments: CustomerData(
+        salutation: salutation,
+        firstName: firstname,
+        lastName: lastname,
+        email: email,
+        workPhone: workphone,
+        mobile: mobile,
+        address: address,
+        remarks: remarks,
+        salesperson: salesperson,
+        customerId: _customerID
       ),
     );
+
   } catch (e) {
     print("Error: $e");
     // Handle error, show error dialog or snackbar
   }
 }
+
   
   
   
@@ -260,7 +205,7 @@ void _showErrorDialog(BuildContext context, String message) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add customer"),
+        title: const Text("Add Customer"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -269,35 +214,45 @@ void _showErrorDialog(BuildContext context, String message) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Customer ID : $_customerID ' ,  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5,),
+             Row(
+  children: <Widget>[
+    
+    Text(
+      'Customer ID: $_customerID', // Display customer ID
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(width: 45,),
+    Text(
+  'Date: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
+  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+
+    
+  ],
+),
+              const SizedBox(height: 10,),
               const Text(
-                'Customer Name:',
+                'Customer Name: ',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
                   Expanded(
+                    flex: 1,
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                       child: TextFormField(
+                        
                         controller: _salutation,
                         keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Salutation',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 6.0),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter salutation';
-                          }
-                          return null;
-                        },
+                        
                       ),
                     ),
                   ),
@@ -310,24 +265,32 @@ void _showErrorDialog(BuildContext context, String message) {
                         borderRadius: BorderRadius.circular(5.0),
                       ),
                       child: TextFormField(
-                        controller: _firstname,
-                        keyboardType: TextInputType.name,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'First Name',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 6.0),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter first name';
-                          }
-                          return null;
-                        },
-                      ),
+  controller: _firstname,
+  keyboardType: TextInputType.name,
+  decoration: const InputDecoration(
+    border: InputBorder.none,
+    hintText: 'First Name *',
+    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+  ),
+  validator: (value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter first name';
+  }
+  for (int i = 0; i < value.length; i++) {
+    if (!value[i].contains(RegExp(r'[a-zA-Z]'))) {
+      return 'Please enter a valid first name';
+    }
+  }
+  return null;
+},
+
+),
+
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
+                    flex: 2,
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
@@ -341,12 +304,6 @@ void _showErrorDialog(BuildContext context, String message) {
                           hintText: 'Last Name',
                           contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter last name';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                   ),
@@ -354,7 +311,94 @@ void _showErrorDialog(BuildContext context, String message) {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Customer Email:',
+                'Customer Contact:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+             Row(
+                children: [
+        
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+
+
+                      child: TextFormField(
+                        controller: _mobile,
+                       
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Mobile *',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                         onChanged: (value) {
+            _checkIsPhoneValid2();
+          },
+          onTap: () {
+            setState(() {
+              isFocused = true;
+            });
+          },
+          onEditingComplete: () {
+            setState(() {
+              isFocused = false;
+            });
+          }                 ))),
+           if (! isPhoneValid && _mobile.text.isNotEmpty)
+         Padding(
+            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+            child: Text(
+              'Please enter a valid mobile Number',
+              style: TextStyle(color: Colors.red, fontSize: 12.0),
+            ),
+          ), const SizedBox(width: 10),
+                                Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: TextFormField(
+                        controller: _workphone,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Work Phone',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                         onChanged: (value) {
+            _checkIsPhoneValid();
+          },
+          onTap: () {
+            setState(() {
+              isFocused = true;
+            });
+          },
+          onEditingComplete: () {
+            setState(() {
+              isFocused = false;
+            });
+          }
+                    )  )),
+             if (! isPhoneValid && _workphone.text.isNotEmpty)
+         Padding(
+            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+            child: Text(
+              'Please enter a valid mobile Number',
+              style: TextStyle(color: Colors.red, fontSize: 12.0),
+            ),
+          ),      
+                
+                 
+                
+                ],
+              ),
+              const SizedBox(height: 20,),
+              const Text(
+                'Customer E-mail:',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Container(
@@ -367,7 +411,7 @@ void _showErrorDialog(BuildContext context, String message) {
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Email',
+                    hintText: 'E-mail',
                     contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                   ),
                    onChanged: (value) {
@@ -415,90 +459,47 @@ void _showErrorDialog(BuildContext context, String message) {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Customer Phone:',
+               const Text(
+                'Remarks:',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: _workphone,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Work Phone',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        ),
-                         onChanged: (value) {
-            _checkIsPhoneValid();
-          },
-          onTap: () {
-            setState(() {
-              isFocused = true;
-            });
-          },
-          onEditingComplete: () {
-            setState(() {
-              isFocused = false;
-            });
-          }
-                    )  )),
-             if (! isPhoneValid && _workphone.text.isNotEmpty)
-         Padding(
-            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
-            child: Text(
-              'Please enter a valid mobile Number',
-              style: TextStyle(color: Colors.red, fontSize: 12.0),
-            ),
-          ),      
-                
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: _mobile,
-                       
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Mobile',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        ),
-                         onChanged: (value) {
-            _checkIsPhoneValid2();
-          },
-          onTap: () {
-            setState(() {
-              isFocused = true;
-            });
-          },
-          onEditingComplete: () {
-            setState(() {
-              isFocused = false;
-            });
-          }                 ))),
-           if (! isPhoneValid && _mobile.text.isNotEmpty)
-         Padding(
-            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
-            child: Text(
-              'Please enter a valid mobile Number',
-              style: TextStyle(color: Colors.red, fontSize: 12.0),
-            ),
-          ),
-                      
-                
-                ],
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _remarks,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'not to be printed',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  ),
+                ),
               ),
+                
+              const SizedBox(height: 20),
+               const Text(
+                'Sales Person:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _salesperson,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Sales Person',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  ),
+                ),
+              ),
+              
               const Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -512,7 +513,7 @@ void _showErrorDialog(BuildContext context, String message) {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: const Text('Save', style: TextStyle(color: Colors.white)),
+                    child: const Text('Invoice', style: TextStyle(color: Colors.white)),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
@@ -536,4 +537,30 @@ void _showErrorDialog(BuildContext context, String message) {
       ),
     );
   }
+}
+
+class CustomerData {
+  final String salutation;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final int? workPhone;
+  final int? mobile;
+  final String address;
+  final String remarks;
+  final String salesperson;
+  final String customerId; // Add customerId field
+
+  CustomerData({
+    required this.salutation,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    this.workPhone,
+    this.mobile,
+    required this.address,
+    required this.remarks,
+    required this.salesperson,
+    required this.customerId, // Initialize customerId in the constructor
+  });
 }

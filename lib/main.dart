@@ -96,8 +96,8 @@ import 'package:cloneapp/pages/subpages/linkaccount.dart';
 import 'package:cloneapp/pages/subpages/notes.dart';
 import 'package:cloneapp/pages/subpages/pdfgenerate.dart';
 import 'package:cloneapp/pages/subpages/settings/applock.dart';
-import 'package:cloneapp/pages/subpages/settings/password.dart';
-import 'package:cloneapp/pages/subpages/settings/pattern.dart';
+import 'package:cloneapp/pages/subpages/settings/customerdetails.dart';
+import 'package:cloneapp/pages/subpages/settings/invoicedetails.dart';
 import 'package:cloneapp/pages/subpages/share.dart';
 import 'package:cloneapp/pages/subpages/users.dart';
 import 'package:cloneapp/pages/verify.dart';
@@ -141,9 +141,12 @@ class MyApp extends StatelessWidget {
   final invoice;
 
   MyApp({super.key, this.invoice});
+  
+  
 
   @override
   Widget build(BuildContext context) {
+    var customerData;
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home:  const Open(
@@ -152,6 +155,7 @@ class MyApp extends StatelessWidget {
           //   Navigator.pushReplacementNamed(context, '/details');
           // },
         ),
+      
       routes: { 
         
         '/signup': (context) =>  Signup(),
@@ -182,8 +186,9 @@ class MyApp extends StatelessWidget {
         '/invoicetemplate':(context)=> const Invoicedata(),
         '/verify':(context)=> const Verify(),
         '/password':(context)=>  DesignPage(),
-        '/pw':(context)=>  CustomLoader(),
-        '/notepage':(context)=> Notes()
+        '/pw':(context)=>  Invoicedetails(customerData: customerData),
+        '/notepage':(context)=> Notes(),
+        '/customerdetail':(context)=>  CustomerDetails(customerData: customerData),
       },
     );
   }

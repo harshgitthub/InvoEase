@@ -72,6 +72,7 @@ dependencies:
   flutter_resizable_container: ^2.0.0
   flutter_animated_button: ^2.0.3
   animated_button: ^0.2.0
+  g_recaptcha_v3: ^0.0.6
 
 dev_dependencies:
   flutter_test:

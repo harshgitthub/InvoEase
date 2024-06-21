@@ -589,7 +589,7 @@
 // //             children: [
 // //               ElevatedButton(
 // //                 onPressed: () {
-// //                   saveInvoice();
+                  // saveInvoice();
 // //                 },
 // //                 style: ElevatedButton.styleFrom(
 // //                   backgroundColor: Colors.blue,
@@ -621,10 +621,9 @@
 
 
 
-
-
 import 'dart:math';
-import 'package:cloneapp/pages/home.dart';
+import 'package:cloneapp/pages/customeradd.dart';
+import 'package:cloneapp/pages/subpages/billing.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -641,45 +640,22 @@ class _InvoiceaddState extends State<Invoiceadd> {
   String _invoiceId = '';
   String formattedDate = '';
   DateTime? _selectedDate;
-  List<String> _customers = [];
-  String? selectedCustomer;
-  String? _paymentMethod ;
+  String? _paymentMethod;
   String _review = '';
   final Set<String> _selectedProcedures = {}; // Changed to Set for multi-selection
 
   final currentuser = FirebaseAuth.instance.currentUser;
-  final List<String> _paymentMethods = ['Credit Card', 'Debit Card', 'Phonpe', 'Bank Transfer'];
+  final List<String> _paymentMethods = ['Cash', 'Cheque', 'Online'];
+  CustomerData? _customerData; // Hold selected customer data
+
   @override
   void initState() {
     super.initState();
     _generateInvoiceId();
     _formatDate();
-    _fetchCustomers();
   }
-
-  Future<void> _fetchCustomers() async {
-    // Fetch customer list from Firestore
-    try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection("USERS")
-          .doc(currentuser!.uid)
-          .collection("customers")
-          .get();
-
-      List<String> customers = snapshot.docs
-          .map((doc) =>
-              "${doc['Salutation']} ${doc['First Name']} ${doc['Last Name']}")
-          .toList();
-
-      setState(() {
-        _customers = customers;
-      });
-    } catch (e) {
-      print("Error fetching customers: $e");
-    }
-  }
-
-  Future<void> _selectDueDate() async {
+  
+ Future<void> _selectDueDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
@@ -708,28 +684,13 @@ class _InvoiceaddState extends State<Invoiceadd> {
   }
 
   Future<void> saveInvoice() async {
-    if (selectedCustomer == null) {
+    if (_customerData == null) {
       print("No customer selected");
       return;
     }
 
     try {
-      // Fetch selected customer details from Firestore
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection("USERS")
-          .doc(currentuser!.uid)
-          .collection("customers")
-          .where('Salutation', isEqualTo: selectedCustomer!.split(' ')[0])
-          .where('First Name', isEqualTo: selectedCustomer!.split(' ')[1])
-          .where('Last Name', isEqualTo: selectedCustomer!.split(' ')[2])
-          .get();
-
-      if (snapshot.docs.isEmpty) {
-        print("Customer does not exist");
-        return;
-      }
-
-      var customerData = snapshot.docs.first.data() as Map<String, dynamic>;
+      // You can directly access properties of _customerData
       Timestamp now = Timestamp.now();
 
       await FirebaseFirestore.instance
@@ -738,276 +699,279 @@ class _InvoiceaddState extends State<Invoiceadd> {
           .collection("invoices")
           .doc(_invoiceId)
           .set({
-
-            
-        "customerName": selectedCustomer,
-        "customerAddress": customerData["Address"],
-        "customerEmail": customerData["Email"],
-        "customerID":customerData["customerID"],
-        "workphone": customerData["Work-phone"],
-        "mobile": customerData["Mobile"],
+        "customerName": _customerData!.salutation +
+            ' ' +
+            _customerData!.firstName +
+            ' ' +
+            _customerData!.lastName,
+        "customerAddress": _customerData!.address,
+        "customerEmail": _customerData!.email,
+        // Assuming customerID is part of CustomerData
+        "customerID": _customerData!.customerId, // Adjust this according to your data structure
+        "workphone": _customerData!.workPhone,
+        "mobile": _customerData!.mobile,
         "invoiceId": _invoiceId,
         "invoiceDate": now,
         "paymentMethod": _paymentMethod,
         "review": _review,
         "dueDate": _selectedDate,
         "procedures": _selectedProcedures.toList(),
-        "status": false, // Save as list of selected procedures
+        "status": false,
       });
 
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Success'),
-          content: const Text('Invoice saved successfully'),
+          content:
+              const Text('Invoice saved successfully. Proceed to Billing Page '),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.pushNamed(context, '/invoice');
+                navigateToBillingPage();
               },
             ),
           ],
         ),
       );
       print("Invoice saved successfully!");
-    } catch (e){
+    } catch (e) {
       print("Error saving invoice: $e");
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  void navigateToBillingPage() {
+    // Navigate to BillingPage with invoice data
+    var invoice = {
+      "customerName": _customerData!.salutation +
+          ' ' +
+          _customerData!.firstName +
+          ' ' +
+          _customerData!.lastName,
+      "customerAddress": _customerData!.address,
+      "customerEmail": _customerData!.email,
+      "customerId": _customerData!.customerId,
+      "workphone": _customerData!.workPhone ?? 0,
+      "mobile": _customerData!.mobile ?? 0,
+      "invoiceId": _invoiceId,
+      "invoiceDate": Timestamp.now(),
+      "paymentMethod": _paymentMethod,
+      "review": _review,
+      "dueDate": _selectedDate,
+      "procedures": _selectedProcedures.toList(),
+      "status": false,
+    };
 
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text("Add Invoice"),
-      actions: [
-        IconButton(
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BillingPage(invoice: invoice),
+      )
+    );
+    }
+
+  @override
+  Widget build(BuildContext context) {
+    _customerData =
+        ModalRoute.of(context)?.settings.arguments as CustomerData?;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Add Invoice"),
+        actions: [
+          IconButton(
             icon: const Icon(Icons.person_add),
             onPressed: () {
               Navigator.pushNamed(context, '/customer');
             },
             tooltip: "Add customer",
           ),
-      ],
-      // leading: Builder(
-      //   builder: (BuildContext context) {
-      //     return IconButton(
-      //       icon: const Icon(Icons.menu),
-      //       onPressed: () {
-      //         Scaffold.of(context).openDrawer();
-      //       },
-      //       tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-      //     );
-      //   },
-      // ),
-    ),
-    // drawer: drawer(context), // Placeholder for your drawer
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Customer Name:",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("USERS")
-                  .doc(currentuser!.uid)
-                  .collection("customers")
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No customers found.'));
-                } else {
-                  _customers = snapshot.data!.docs
-                      .map((doc) => "${doc['Salutation']} ${doc['First Name']} ${doc['Last Name']}")
-                      .toList();
-                  return Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      value: selectedCustomer,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCustomer = newValue!;
-                        });
-                      },
-                      items: _customers
-                          .map((value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ))
-                          .toList(),
-                    ),
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Invoice ID and Date:",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Card(
-                    elevation: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Invoice ID:",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            _invoiceId,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Customer Details:",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              if (_customerData != null) ...[
+                Text(
+                  "${_customerData!.salutation} ${_customerData!.firstName} ${_customerData!.lastName}",
+                  style: const TextStyle(fontSize: 18),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 1,
-                  child: Card(
-                    elevation: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Invoice Date:",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            formattedDate,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: 8),
+                Text(
+                  "Email: ${_customerData!.email}",
+                  style: const TextStyle(fontSize: 18),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  "Address: ${_customerData!.address}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Mobile: ${_customerData!.mobile}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 16),
               ],
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Due Date:",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              elevation: 4,
-              child: InkWell(
-                onTap: () => _selectDueDate(),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _selectedDate == null
-                            ? 'Select Due Date'
-                            : '${_selectedDate!.toLocal()}'.split(' ')[0],
-                        style: const TextStyle(fontSize: 20),
+              const SizedBox(height: 16),
+              const Text(
+                "Invoice ID and Date:",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Card(
+                      elevation: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Invoice ID:",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _invoiceId,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Icon(Icons.calendar_today),
-                    ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 1,
+                    child: Card(
+                      elevation: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Invoice Date:",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              formattedDate,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Due Date:",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                elevation: 4,
+                child: InkWell(
+                  onTap: () => _selectDueDate(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _selectedDate == null
+                              ? 'Select Due Date'
+                              : '${_selectedDate!.toLocal()}'.split(' ')[0],
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                        const Icon(Icons.calendar_today),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-          "Payment Method:",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-         const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          value: _paymentMethod,
-          onChanged: (value) {
-            setState(() {
-              _paymentMethod = value;
-            });
-          },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'Select payment method',
+              const SizedBox(height: 16),
+              const Text(
+                "Payment Method:",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                value: _paymentMethod,
+                onChanged: (value) {
+                  setState(() {
+                    _paymentMethod = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Select payment method',
+                ),
+                items: _paymentMethods.map((String method) {
+                  return DropdownMenuItem<String>(
+                    value: method,
+                    child: Text(method),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      saveInvoice();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child:
+                        const Text('Save', style: TextStyle(fontSize: 18, color: Colors.white)),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text('Cancel',
+                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
           ),
-          items: _paymentMethods.map((String method) {
-            return DropdownMenuItem<String>(
-              value: method,
-              child: Text(method),
-            );
-          }).toList(),
-        ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    saveInvoice();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: const Text('Save', style: TextStyle(fontSize: 18 , color: Colors.white)),
-                ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: const Text('Cancel', style: TextStyle(fontSize: 18 , color:  Colors.white)  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

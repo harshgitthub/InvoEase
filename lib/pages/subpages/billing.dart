@@ -4560,6 +4560,7 @@ import 'package:intl/intl.dart';
 
 class BillingPage extends StatefulWidget {
   final Map<String, dynamic> invoice;
+  
 
   const BillingPage({Key? key, required this.invoice}) : super(key: key);
 

@@ -17,7 +17,7 @@ class Home extends StatelessWidget {
       length: 3, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Name of the organisation"),
+          title: const Text("Home"),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -305,7 +305,7 @@ Drawer drawer(BuildContext context) {
                       
                       label: Text(
                         organization,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -318,7 +318,7 @@ Drawer drawer(BuildContext context) {
               buildListTile(
                 Icons.home_filled,
                 'Home',
-                '',
+                '/home',
                 context,
               ),
               buildListTile(

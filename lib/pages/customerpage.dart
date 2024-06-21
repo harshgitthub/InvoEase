@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:cloneapp/pages/home.dart';
+import 'package:cloneapp/pages/subpages/settings/customerdetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -145,7 +147,12 @@ class _CustomerpageState extends State<Customerpage> {
     }
   }
 
-  Future<void> _deleteCustomer(String docId) async {
+  Future<void> _deleteCustomer(String docId, BuildContext context) async {
+  // Show warning dialog and wait for user confirmation
+  bool shouldDelete = await showWarning(context);
+
+  // If the user confirmed the deletion, proceed with deleting the customer document
+  if (shouldDelete) {
     await FirebaseFirestore.instance
         .collection("USERS")
         .doc(currentUser!.uid)
@@ -153,6 +160,40 @@ class _CustomerpageState extends State<Customerpage> {
         .doc(docId)
         .delete();
   }
+}
+
+Future<bool> showWarning(BuildContext context) async {
+  // Completer to signal the result of the dialog
+  Completer<bool> completer = Completer<bool>();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Confirm Delete'),
+      content: const Text('Are you sure you want to delete this item?'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            completer.complete(false); // Signal that the deletion should not proceed
+          },
+        ),
+        TextButton(
+          child: const Text('Delete'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            completer.complete(true); // Signal that the deletion should proceed
+          },
+        ),
+      ],
+    ),
+  );
+
+  // Wait for the dialog to be closed and the result to be returned
+  return completer.future;
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +263,457 @@ class _CustomerpageState extends State<Customerpage> {
                   (a['timestamp'] as Timestamp).compareTo(b['timestamp'] as Timestamp));
           }
 
-          // return ListView.builder(
+       return ListView.builder(
+            itemCount: documents.length,
+            itemBuilder: (context, index) {
+              var doc = documents[index];
+               Map<String, dynamic>? customerData = doc.data() as Map<String, dynamic>?;
+     return InkWell(
+      onTap: () {
+        // Handle the tap event here
+       Navigator.push(
+  context,
+   MaterialPageRoute(
+              builder: (context) => CustomerDetails(customerData: customerData!),
+  ),
+);
+      },
+    
+
+    child:  ListTile(
+  contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
+  subtitle: Row(
+    children: [
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${doc["Salutation"] ?? ''} ${doc["First Name"] ?? ''} ${doc["Last Name"] ?? ''}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 20,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 1),
+            Text(
+              ""  " ${doc["customerID"] ?? ''}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 15,
+              ),
+            ),
+            const SizedBox(height: 1),
+            Text(
+              ""  " ${DateFormat.yMMMd().format((doc["timestamp"] as Timestamp).toDate())}",
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 1),
+            Text(
+              ""  " ${doc["Mobile"] ?? ''}",
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 1),
+            Text(
+              ""  " ${doc["Email"] ?? ''}",
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+      Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.phone, color: Colors.blue, size: 22),
+            onPressed: () => _makePhoneCall(doc.id),
+          ),
+          IconButton(
+            icon: const Icon(Icons.message, color: Colors.blue, size: 22),
+            onPressed: () => _sendMessage(doc.id),
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blue, size: 22),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Customeredit(customerData: doc),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Color.fromARGB(255, 17, 14, 14), size: 22),
+            onPressed: () => _deleteCustomer(doc.id, context),
+          ),
+        ],
+      ),
+    ],
+  ),
+)
+    );
+  },
+);
+},
+      ),
+    );
+  }
+
+ void _showSortOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sort Options'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                RadioListTile<String>(
+                  title: const Text('Customer Name'),
+                  value: 'Customer Name',
+                  groupValue: selectedSort,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedSort = value!;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                RadioListTile<String>(
+                  title: const Text('Date'),
+                  value: 'Entry Time',
+                  groupValue: selectedSort,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedSort = value!;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class Customeredit extends StatelessWidget {
+  final DocumentSnapshot customerData;
+
+  Customeredit({required this.customerData});
+
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController salutationController = TextEditingController();
+  final TextEditingController workphoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController salespersonController = TextEditingController();
+  final TextEditingController remarksController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    salutationController.text = customerData["Salutation"];
+    firstNameController.text = customerData["First Name"];
+    lastNameController.text = customerData["Last Name"];
+    emailController.text = customerData["Email"];
+    mobileController.text = customerData["Mobile"].toString();
+    workphoneController.text = customerData["Work-phone"].toString();
+    addressController.text = customerData["Address"];
+    remarksController.text = customerData["Remarks"];
+    salespersonController.text = customerData["Salesperson"];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Edit Customer"),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Row(
+  children: <Widget>[
+    
+               Text(
+      'CustomerID: ${customerData["customerID"]}', // Display customer ID
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(width: 45,),
+   Text(
+  'Date: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
+  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+),
+  ]),
+             const SizedBox(height: 10,),
+              const Text(
+                'Customer Name: ',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: TextFormField(
+                        controller: salutationController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Salutation',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 6.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: TextFormField(
+                        controller: firstNameController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'First Name',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: TextFormField(
+                        controller: lastNameController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Last Name',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+               const Text(
+                'Customer Contact:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                   Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: TextFormField(
+                        controller: mobileController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Mobile',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: TextFormField(
+                        controller: workphoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Work Phone',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                 
+                ],
+              ),
+              const Text(
+                'Customer Email:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Email',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Customer Address:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Address',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+             
+                  const SizedBox(height: 20),
+               const Text(
+                'Remarks:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: remarksController,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'not to be printed',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  ),
+                ),
+              ),
+                
+              const SizedBox(height: 20),
+               const Text(
+                'Sales Person:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller:salespersonController,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Sales Person',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                  ),
+                ),
+              ),
+              
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection("USERS")
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .collection("customers")
+                    .doc(customerData.id)
+                    .update({
+                  "Salutation":salutationController.text,
+                  "First Name": firstNameController.text,
+                  "Last Name": lastNameController.text,
+                  "Email": emailController.text,
+                  "Work-phone":int.tryParse(workphoneController.text) ?? workphoneController.text,
+                  "Mobile": int.tryParse(mobileController.text) ?? mobileController.text,
+                  "Address":addressController.text,
+                  "Remarks":remarksController.text,
+                  "Salesperson":salespersonController.text,  
+                                } );
+
+                Navigator.pop(context);
+                 ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.black,
+          content: Text("Updated the details"),
+        ),
+      );
+                Navigator.pushNamed(context,'/customeradd');
+              },
+               style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+               child: const Text('Update', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+            ]
+      ),
+      )
+      )
+    );
+  }
+}
+
+
+    // return ListView.builder(
           //   padding: EdgeInsets.all(10.0),
           //   itemCount: filteredDocs.length,
           //   itemBuilder: (context, index) {
@@ -306,381 +797,3 @@ class _CustomerpageState extends State<Customerpage> {
           //   },
           // );
 
-
-       return ListView.builder(
-            itemCount: documents.length,
-            itemBuilder: (context, index) {
-              var doc = documents[index];
-     return InkWell(
-      onTap: () {
-        // Handle the tap event here
-        Navigator.pushNamed(context,
-        '/invoiceadd'
-          
-          );
-      },
-    
-
-    child:  ListTile(
-  contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
-  subtitle: Row(
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "${doc["Salutation"] ?? ''} ${doc["First Name"] ?? ''} ${doc["Last Name"] ?? ''}",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontSize: 20,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 1),
-            Text(
-              ""  " ${doc["customerID"] ?? ''}",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(height: 1),
-            Text(
-              ""  " ${DateFormat.yMMMd().format((doc["timestamp"] as Timestamp).toDate())}",
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 1),
-            Text(
-              ""  " ${doc["Mobile"] ?? ''}",
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 1),
-            Text(
-              ""  " ${doc["Email"] ?? ''}",
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-      Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.phone, color: Colors.blue, size: 22),
-            onPressed: () => _makePhoneCall(doc.id),
-          ),
-          IconButton(
-            icon: const Icon(Icons.message, color: Colors.blue, size: 22),
-            onPressed: () => _sendMessage(doc.id),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.blue, size: 22),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Customeredit(customerData: doc),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Color.fromARGB(255, 17, 14, 14), size: 22),
-            onPressed: () => _deleteCustomer(doc.id),
-          ),
-        ],
-      ),
-    ],
-  ),
-)
-    );
-  },
-);
-},
-      ),
-    );
-  }
-
- void _showSortOptions() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Sort Options'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                RadioListTile<String>(
-                  title: const Text('Customer Name'),
-                  value: 'Customer Name',
-                  groupValue: selectedSort,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedSort = value!;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                RadioListTile<String>(
-                  title: const Text('Date'),
-                  value: 'Entry Time',
-                  groupValue: selectedSort,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedSort = value!;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-class Customeredit extends StatelessWidget {
-  final DocumentSnapshot customerData;
-
-  Customeredit({required this.customerData});
-
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController salutationController = TextEditingController();
-  final TextEditingController workphoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController mobileController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    salutationController.text = customerData["Salutation"];
-    firstNameController.text = customerData["First Name"];
-    lastNameController.text = customerData["Last Name"];
-    emailController.text = customerData["Email"];
-    mobileController.text = customerData["Mobile"].toString();
-    workphoneController.text = customerData["Work-phone"].toString();
-    addressController.text = customerData["Address"];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Customer"),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Customer Name:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: salutationController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Salutation',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: firstNameController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'First Name',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 6.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: lastNameController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Last Name',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Customer Email:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Email',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Customer Address:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: TextFormField(
-                  controller: addressController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Address',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Customer Phone:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: workphoneController,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Work Phone',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: TextFormField(
-                        controller: mobileController,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Mobile',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-                   const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-            ElevatedButton(
-              onPressed: () async {
-                await FirebaseFirestore.instance
-                    .collection("USERS")
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .collection("customers")
-                    .doc(customerData.id)
-                    .update({
-                  "Salutation":salutationController.text,
-                  "First Name": firstNameController.text,
-                  "Last Name": lastNameController.text,
-                  "Email": emailController.text,
-                  "Work-phone":int.tryParse(workphoneController.text) ?? workphoneController.text,
-                  "Mobile": int.tryParse(mobileController.text) ?? mobileController.text,
-                  "Address":addressController.text,
-                } );
-
-                Navigator.pop(context);
-                 ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.black,
-          content: Text("Updated the details"),
-        ),
-      );
-                Navigator.pushNamed(context,'/customeradd');
-              },
-               style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-               child: const Text('Update', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
-            ]
-      ),
-      )
-      )
-    );
-  }
-}
