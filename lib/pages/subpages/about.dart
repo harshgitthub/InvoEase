@@ -476,6 +476,7 @@
 
 import 'package:cloneapp/pages/home.dart';
 import 'package:cloneapp/pages/subpages/invoicedata.dart';
+// import 'package:cloneapp/pages/subpages/pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -484,6 +485,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -1054,3 +1056,122 @@ class Invoice {
   });
 }
 
+Future<void> _createAndSaveSpreadsheetPdf2(Invoice invoice, Map<String, dynamic> organizationData) async {
+  final pdf = pw.Document();
+
+  pdf.addPage(
+    pw.Page(
+      build: (pw.Context context) {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              organizationData['Organisation Name'] ?? '',
+              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Text(
+              organizationData['Address'] ?? '',
+              style: const pw.TextStyle(fontSize: 14),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Row(
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Customer Name: ${invoice.customerName}', style: const pw.TextStyle(fontSize: 16)),
+                    pw.Text('Customer Address: ${invoice.customerAddress}', style: const pw.TextStyle(fontSize: 14)),
+                    pw.Text('Customer Email: ${invoice.customerEmail}', style: const pw.TextStyle(fontSize: 14)),
+                  ],
+                ),
+                pw.SizedBox(width: 20),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Invoice ID: ${invoice.id}', style: const pw.TextStyle(fontSize: 16)),
+                    pw.Text(
+                      'Invoice Date: ${DateFormat('yyyy-MM-dd HH:mm').format(invoice.invoiceDate)}',
+                      style: const pw.TextStyle(fontSize: 14),
+                    ),
+                    pw.Text(
+                      'Due Date: ${DateFormat('yyyy-MM-dd HH').format(invoice.dueDate)}',
+                      style: const pw.TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 30),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                pw.TableRow(
+                  children: [
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(5),
+                      alignment: pw.Alignment.center,
+                      child: pw.Text('Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(5),
+                      alignment: pw.Alignment.center,
+                      child: pw.Text('Price', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(5),
+                      alignment: pw.Alignment.center,
+                      child: pw.Text('Quantity', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(5),
+                      alignment: pw.Alignment.center,
+                      child: pw.Text('Amount', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                for (var item in invoice.procedures)
+                  pw.TableRow(
+                    children: [
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(5),
+                        alignment: pw.Alignment.centerLeft,
+                        child: pw.Text(item['description'] ?? ''),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(5),
+                        alignment: pw.Alignment.center,
+                        child: pw.Text('₹${item['price']?.toString() ?? ''}'),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(5),
+                        alignment: pw.Alignment.center,
+                        child: pw.Text('${item['quantity']?.toString() ?? ''}'),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(5),
+                        alignment: pw.Alignment.center,
+                        child: pw.Text('₹${(item['quantity'] ?? 1) * (item['price']?.toDouble() ?? 0)}'),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'Total Bill: ₹${invoice.totalBill.toStringAsFixed(2)}',
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 40),
+          ],
+        );
+      },
+    ),
+  );
+
+  final output = await getTemporaryDirectory();
+  final file = File('${output.path}/${invoice.id}_spreadsheet_invoice.pdf');
+  await file.writeAsBytes(await pdf.save());
+
+  // Share the file
+  Share.shareXFiles([XFile(file.path)], text: 'Here is your invoice: ${invoice.id}_spreadsheet_invoice.pdf');
+}

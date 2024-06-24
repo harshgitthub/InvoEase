@@ -588,11 +588,11 @@ class DialogExamplePage extends StatelessWidget {
           body: Center(
             child: Column(
               children: <Widget>[
-                Text('This is a custom dialog body.'),
-                SizedBox(height: 10),
+                const Text('This is a custom dialog body.'),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {},
-                  child: Text('Action'),
+                  child: const Text('Action'),
                 ),
               ],
             ),
@@ -619,13 +619,13 @@ class DialogExamplePage extends StatelessWidget {
           title: 'Confirmation',
           desc: 'Do you really want to delete this item?',
           btnCancel: ElevatedButton(
-            child: Text('No'),
+            child: const Text('No'),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           btnOk: ElevatedButton(
-            child: Text('Yes'),
+            child: const Text('Yes'),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -639,18 +639,18 @@ class DialogExamplePage extends StatelessWidget {
           body: Center(
             child: Column(
               children: <Widget>[
-                Text(
+                const Text(
                   'No Header Dialog',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
-                Text('This dialog does not have a header.'),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
+                const Text('This dialog does not have a header.'),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Close'),
+                  child: const Text('Close'),
                 ),
               ],
             ),
@@ -663,7 +663,7 @@ class DialogExamplePage extends StatelessWidget {
           context: context,
           dialogType: DialogType.info,
           animType: AnimType.bottomSlide,
-          customHeader: Icon(
+          customHeader: const Icon(
             Icons.info,
             size: 50,
             color: Colors.blue,
@@ -681,7 +681,7 @@ class DialogExamplePage extends StatelessWidget {
           title: 'Rich Text',
           desc: '',
           body: RichText(
-            text: TextSpan(
+            text: const TextSpan(
               children: [
                 TextSpan(
                   text: 'This is an ',
@@ -708,11 +708,11 @@ class DialogExamplePage extends StatelessWidget {
           customHeader: Container(
             height: 50,
             width: 50,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.blue,
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.person,
                 size: 30,
@@ -733,7 +733,7 @@ class DialogExamplePage extends StatelessWidget {
           title: 'Auto Dismiss',
           desc: 'This dialog will close automatically after 3 seconds.',
           btnOkOnPress: () {},
-          autoHide: Duration(seconds: 3),
+          autoHide: const Duration(seconds: 3),
         ).show();
         break;
 
@@ -747,7 +747,7 @@ class DialogExamplePage extends StatelessWidget {
           title: 'Auto Dismiss',
           desc: 'This dialog will close automatically after 3 seconds.',
           btnOkOnPress: () {},
-          autoHide: Duration(seconds: 3),
+          autoHide: const Duration(seconds: 3),
         ).show();
         break;
       case 14:
@@ -768,26 +768,26 @@ class DialogExamplePage extends StatelessWidget {
           dialogType: DialogType.noHeader,
           body: Column(
             children: <Widget>[
-              Text(
+              const Text(
                 'Input Field Dialog',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: inputController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Enter your input',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   String input = inputController.text;
                   // Do something with the input
                   Navigator.of(context).pop();
                 },
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
             ],
           ),
@@ -803,11 +803,11 @@ class DialogExamplePage extends StatelessWidget {
             builder: (context, setState) {
               return Column(
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'Checkbox Dialog',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: <Widget>[
                       Checkbox(
@@ -818,10 +818,10 @@ class DialogExamplePage extends StatelessWidget {
                           });
                         },
                       ),
-                      Text('Accept terms and conditions'),
+                      const Text('Accept terms and conditions'),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
                       if (isChecked) {
@@ -831,7 +831,7 @@ class DialogExamplePage extends StatelessWidget {
                         // Show a message if checkbox is not checked
                       }
                     },
-                    child: Text('Continue'),
+                    child: const Text('Continue'),
                   ),
                 ],
               );
@@ -847,7 +847,7 @@ class DialogExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Awesome Dialog Examples'),
+        title: const Text('Awesome Dialog Examples'),
       ),
       body: SingleChildScrollView(
         child: Padding(

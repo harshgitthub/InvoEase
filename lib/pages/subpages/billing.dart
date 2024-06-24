@@ -4629,7 +4629,7 @@ class _BillingPageState extends State<BillingPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'No items',
                       style: TextStyle(
                         fontSize: 18,
@@ -4647,7 +4647,7 @@ class _BillingPageState extends State<BillingPage> {
                         });
                         Navigator.of(context).pop(); // Close the dialog
                       },
-                      child: Text(
+                      child: const Text(
                         'Click to add item',
                         style: TextStyle(
                           color: Colors.blue,
@@ -4670,9 +4670,9 @@ class _BillingPageState extends State<BillingPage> {
               btnCancelColor: Colors.red,
             ).show();
           },
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Icon(Icons.add, size: 24.0),
               SizedBox(width: 8),
               Text('Add Item'),
@@ -4770,9 +4770,9 @@ class _BillingPageState extends State<BillingPage> {
               btnCancelColor: Colors.red,
             ).show();
           },
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               Icon(Icons.add, size: 24.0),
               SizedBox(width: 8),
               Text('Add Item'),
@@ -5018,7 +5018,7 @@ class _BillingPageState extends State<BillingPage> {
                       children: [
                         Text('₹${(item['quantity'] * item['price']).toStringAsFixed(2)}'),
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -5066,14 +5066,14 @@ class _BillingPageState extends State<BillingPage> {
                     title: const Text('Selected Items Checklist'),
                     content: SingleChildScrollView(
   child: Container(
-    padding: EdgeInsets.all(16.0),
+    padding: const EdgeInsets.all(16.0),
     width: double.maxFinite,
     child: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ConstrainedBox(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxHeight: 300, // Example constraint, adjust as needed
           ),
           child: ListView.builder(
@@ -5091,7 +5091,7 @@ class _BillingPageState extends State<BillingPage> {
                       '₹${(item['quantity'] * item['price']).toStringAsFixed(2)}',
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete),
+                      icon: const Icon(Icons.delete),
                       onPressed: () {
                         showDialog(
                           context: context,
@@ -5154,14 +5154,14 @@ class _BillingPageState extends State<BillingPage> {
               flex: 1,
               child: TextFormField(
                 initialValue: taxPercentage.toString(),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) {
                   setState(() {
                     taxPercentage = double.tryParse(value) ?? 0.0;
                     _calculateTotalAmount(); // Recalculate total amount on tax change
                   });
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Tax %',
                   border: OutlineInputBorder(),
                 ),
@@ -5179,14 +5179,14 @@ class _BillingPageState extends State<BillingPage> {
               flex: 1,
               child: TextFormField(
                 initialValue: discountPercentage.toString(),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 onChanged: (value) {
                   setState(() {
                     discountPercentage = double.tryParse(value) ?? 0.0;
                     _calculateTotalAmount(); // Recalculate total amount on discount change
                   });
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Discount %',
                   border: OutlineInputBorder(),
                 ),

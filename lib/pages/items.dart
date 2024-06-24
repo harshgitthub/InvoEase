@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloneapp/pages/home.dart';
 import 'package:cloneapp/pages/invoice.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,6 +36,9 @@ class _ItemsState extends State<Items> {
     }
   }
 
+
+  // Show warning dialog and wait for user confirmation
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +110,7 @@ class _ItemsState extends State<Items> {
                   String itemId = doc.id;
 
                   return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     // leading: CircleAvatar(
                     //   backgroundColor: Colors.blueAccent,
                     //   child: Text(
@@ -118,7 +123,7 @@ class _ItemsState extends State<Items> {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
-                        fontSize: 25
+                        fontSize: 20
                       ),
                     ),
                     subtitle: Column(
@@ -127,20 +132,26 @@ class _ItemsState extends State<Items> {
                         const SizedBox(height: 5),
                         Text(
                           "${doc["Description"]}",
-                          style: const TextStyle(color: Colors.grey ,fontSize: 18),
+                          style: const TextStyle(color: Colors.grey ,fontWeight: FontWeight.w700,fontSize: 16),
                         ),
                         const SizedBox(height: 5),
                         Text(
                           "Price: ₹ ${doc["Selling Price"]}",
                           style: const TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16
                           ),
                         ),
                       ],
                     ),
                     trailing: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -154,8 +165,10 @@ class _ItemsState extends State<Items> {
                           ),
                         );
                       },
-                      child: const Text('Update Item' , style: TextStyle(fontSize: 18 , color: Colors.black),),
+                    
+                      child: const Text('Update Item' , style: TextStyle(fontSize: 14 , color: Colors.black),),
                     ),
+                  
                   );
                 },
               );
@@ -311,6 +324,7 @@ class _EdititemState extends State<Edititem> {
     _description.dispose();
     super.dispose();
   }
+  
 
   void updateUser() async {
     String? itemName = _itemname.text;
@@ -336,22 +350,64 @@ class _EdititemState extends State<Edititem> {
     }
   }
   void deleteUserItem() async {
-  try {
+  // try {
+  //   await FirebaseFirestore.instance
+  //       .collection("USERS")
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .collection("items")
+  //       .doc(widget.itemId)
+  //       .delete();
+  //   print('Document deleted successfully');
+  //   Navigator.pushNamed(context, '/item');
+  // } catch (e) {
+  //   print('Error deleting document: $e');
+  //   // Handle error as needed
+  // }
+   bool shouldDelete = await showWarning(context);
+
+  // If the user confirmed the deletion, proceed with deleting the customer document
+  if (shouldDelete) {
     await FirebaseFirestore.instance
         .collection("USERS")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("items")
         .doc(widget.itemId)
         .delete();
-    print('Document deleted successfully');
-    Navigator.pushNamed(context, '/item');
-  } catch (e) {
-    print('Error deleting document: $e');
-    // Handle error as needed
   }
-  
-
 }
+
+Future<bool> showWarning(BuildContext context) async {
+  // Completer to signal the result of the dialog
+  Completer<bool> completer = Completer<bool>();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Confirm Delete'),
+      content: const Text('Are you sure you want to delete this item?'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            completer.complete(false); // Signal that the deletion should not proceed
+          },
+        ),
+        TextButton(
+          child: const Text('Delete'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            completer.complete(true); // Signal that the deletion should proceed
+          },
+        ),
+      ],
+    ),
+  );
+
+  // Wait for the dialog to be closed and the result to be returned
+  return completer.future;
+}
+
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -364,29 +420,14 @@ Widget build(BuildContext context) {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
-            'Name ',
+            'Item Name ',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: _itemname,
             decoration: const InputDecoration(
-              hintText: 'Enter Item Name',
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Selling Price',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: _sellingprice,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              hintText: 'Enter Selling Price',
+              hintText: 'add name of item',
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
@@ -401,12 +442,28 @@ Widget build(BuildContext context) {
             controller: _description,
             maxLines: 3,
             decoration: const InputDecoration(
-              hintText: 'Enter Description',
+              hintText: 'add description of item',
               border: OutlineInputBorder(),
               contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          const Text(
+            'Price',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _sellingprice,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              hintText: 'Enter Selling Price',
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            ),
+          ),
+          const SizedBox(height: 16),
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

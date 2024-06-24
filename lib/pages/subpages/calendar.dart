@@ -4,20 +4,62 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Notes extends StatelessWidget {
-  const Notes({super.key});
-
-  Future<void> _deleteNote(String noteId) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await FirebaseFirestore.instance
-          .collection('USERS')
-          .doc(user.uid)
-          .collection('notes')
-          .doc(noteId)
-          .delete();
-    }
-  }
+class Calendar extends StatelessWidget {
+  const Calendar({super.key});
+Future<void> _deletetask(BuildContext context, String taskId) async {
+  // Show confirmation dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Confirm Delete"),
+        content: const Text("Are you sure you want to delete this task?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+          ),
+          TextButton(
+            child: const Text("Delete"),
+            onPressed: () async {
+              final user = FirebaseAuth.instance.currentUser;
+              if (user != null) {
+                try {
+                  // Perform delete operation
+                  await FirebaseFirestore.instance
+                      .collection('USERS')
+                      .doc(user.uid)
+                      .collection('calendar')
+                      .doc(taskId)
+                      .delete();
+                  Navigator.of(context).pop(); // Close dialog
+                  // Optionally show a confirmation Snackbar or Toast
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.green,
+                      content: Text("Task deleted successfully"),
+                    ),
+                  );
+                } catch (e) {
+                  print("Error deleting task: $e");
+                  // Optionally show an error Snackbar or Toast
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text("Failed to delete task"),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +67,7 @@ class Notes extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notes"),
+        title: const Text("Calendar"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -41,7 +83,7 @@ class Notes extends StatelessWidget {
       drawer: drawer(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/notesadd');
+          Navigator.pushNamed(context, '/taskadd');
         },
         child: const Icon(Icons.add),
       ),
@@ -50,7 +92,7 @@ class Notes extends StatelessWidget {
               stream: FirebaseFirestore.instance
                   .collection('USERS')
                   .doc(user.uid)
-                  .collection('notes')
+                  .collection('calendar')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -101,7 +143,7 @@ class Notes extends StatelessWidget {
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete ,  color: Colors.red , size: 30,),
-                              onPressed: () => _deleteNote(noteId),
+                              onPressed: () => _deletetask(context , noteId),
                             ),
                           ],
                         ),

@@ -13,68 +13,69 @@ class NotesAddScreen extends StatefulWidget {
 }
 
 class _NotesAddScreenState extends State<NotesAddScreen> {
-  final TextEditingController _taskController = TextEditingController();
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  final TextEditingController _noteController = TextEditingController();
+  // DateTime? _selectedDate;
+  // TimeOfDay? _selectedTime;
 
   @override
   void initState() {
     super.initState();
     if (widget.noteData != null) {
       // If editing existing note, pre-fill data
-      _taskController.text = widget.noteData!['task'];
-      _selectedDate = (widget.noteData!['dateTime'] as Timestamp).toDate();
-      _selectedTime = TimeOfDay.fromDateTime(_selectedDate!);
+      _noteController.text = widget.noteData!['task'];
+      // _selectedDate = (widget.noteData!['dateTime'] as Timestamp).toDate();
+      // _selectedTime = TimeOfDay.fromDateTime(_selectedDate!);
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: Colors.blue,
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
-  }
+  // Future<void> _selectDate(BuildContext context) async {
+  //   final DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: _selectedDate ?? DateTime.now(),
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2101),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           primaryColor: Colors.blue,
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   if (pickedDate != null && pickedDate != _selectedDate) {
+  //     setState(() {
+  //       _selectedDate = pickedDate;
+  //     });
+  //   }
+  // }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
-    );
-    if (pickedTime != null && pickedTime != _selectedTime) {
-      setState(() {
-        _selectedTime = pickedTime;
-      });
-    }
-  }
+  // Future<void> _selectTime(BuildContext context) async {
+  //   final TimeOfDay? pickedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: _selectedTime ?? TimeOfDay.now(),
+  //   );
+  //   if (pickedTime != null && pickedTime != _selectedTime) {
+  //     setState(() {
+  //       _selectedTime = pickedTime;
+  //     });
+  //   }
+  // }
 
   Future<void> _saveTask() async {
-    if (_taskController.text.isNotEmpty && _selectedDate != null && _selectedTime != null) {
+    // if (_taskController.text.isNotEmpty && _selectedDate != null && _selectedTime != null) {
+     if (_noteController.text.isNotEmpty ){
       User? user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-        final String task = _taskController.text;
-        final DateTime dateTime = DateTime(
-          _selectedDate!.year,
-          _selectedDate!.month,
-          _selectedDate!.day,
-          _selectedTime!.hour,
-          _selectedTime!.minute,
-        );
+        final String note = _noteController.text;
+        // final DateTime dateTime = DateTime(
+        //   _selectedDate!.year,
+        //   _selectedDate!.month,
+        //   _selectedDate!.day,
+        //   _selectedTime!.hour,
+        //   _selectedTime!.minute,
+        // );
 
         try {
           if (widget.noteId != null) {
@@ -85,8 +86,8 @@ class _NotesAddScreenState extends State<NotesAddScreen> {
                 .collection('notes')
                 .doc(widget.noteId)
                 .update({
-              'task': task,
-              'dateTime': dateTime,
+              'note': note,
+              // 'dateTime': dateTime,
             });
           } else {
             // Add new note
@@ -95,13 +96,12 @@ class _NotesAddScreenState extends State<NotesAddScreen> {
                 .doc(user.uid)
                 .collection('notes')
                 .add({
-              'task': task,
-              'dateTime': dateTime,
+              'note': note,
+              // 'dateTime': dateTime,
             });
           }
-
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Task ${widget.noteId != null ? 'updated' : 'saved'} successfully!')),
+            SnackBar(content: Text('Note ${widget.noteId != null ? 'updated' : 'saved'} successfully!')),
           );
           Navigator.of(context).pop(); // Return to previous screen
         } catch (e) {
@@ -121,7 +121,7 @@ class _NotesAddScreenState extends State<NotesAddScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.noteId != null ? 'Edit Task' : 'Add Task'),
+        title: Text(widget.noteId != null ? 'Edit note' : 'Add note'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -129,52 +129,52 @@ class _NotesAddScreenState extends State<NotesAddScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextField(
-              controller: _taskController,
+              controller: _noteController,
               decoration: const InputDecoration(
-                labelText: 'Task Description',
+                labelText: 'Description',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16.0),
-            Row(
-              children: <Widget>[
+            // Row(
+            //   children: <Widget>[
                 
-                Expanded(
-                  child: Text(
-                    _selectedDate == null
-                        ? ''
-                        : 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  child: const Text('Choose Date'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    _selectedTime == null
-                        ? ''
-                        : 'Time: ${_selectedTime!.hour}:${_selectedTime!.minute}',
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => _selectTime(context),
-                  child: const Text('Choose Time'),
-                ),
-              ],
-            ),
+            //     Expanded(
+            //       child: Text(
+            //         // _selectedDate == null
+            //             ? ''
+            //             : 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+            //         style: const TextStyle(fontSize: 16.0),
+            //       ),
+            //     ),
+            //     ElevatedButton(
+            //       onPressed: () => _selectDate(context),
+            //       child: const Text('Choose Date'),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 16.0),
+            // Row(
+            //   children: <Widget>[
+            //     Expanded(
+            //       child: Text(
+            //         _selectedTime == null
+            //             ? ''
+            //             : 'Time: ${_selectedTime!.hour}:${_selectedTime!.minute}',
+            //         style: const TextStyle(fontSize: 16.0),
+            //       ),
+            //     ),
+            //     ElevatedButton(
+            //       onPressed: () => _selectTime(context),
+            //       child: const Text('Choose Time'),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 32.0),
             Center(
               child: ElevatedButton(
                 onPressed: _saveTask,
-                child: Text(widget.noteId != null ? 'Update Task' : 'Save Task'),
+                child: Text(widget.noteId != null ? 'Update note' : 'Save note'),
               ),
             ),
           ],

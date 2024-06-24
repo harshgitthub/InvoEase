@@ -16,7 +16,7 @@ class _LinkAccountScreenState extends State<LinkAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Link New Account'),
+        title: const Text('Link New Account'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,24 +25,24 @@ class _LinkAccountScreenState extends State<LinkAccountScreen> {
           children: [
             TextFormField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextFormField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _linkAccount,
-              child: Text('Link Account'),
+              child: const Text('Link Account'),
             ),
             if (_errorMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Text(
                   _errorMessage,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
           ],

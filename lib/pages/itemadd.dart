@@ -1,7 +1,6 @@
-import 'package:cloneapp/pages/home.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class Itemadd extends StatefulWidget {
   const Itemadd({super.key});
@@ -11,41 +10,130 @@ class Itemadd extends StatefulWidget {
 }
 
 class _ItemaddState extends State<Itemadd> {
-
-   
   var currentuser = FirebaseAuth.instance.currentUser;
 
   final _itemname = TextEditingController();
   final _sellingprice = TextEditingController();
   final _description = TextEditingController();
-  customer(String? itemname,  int? sellingprice, String? description) async {
-    if (itemname == null || sellingprice == null || description == null ) {
-      print("Please enter required fields");
-    } else {
-      try {
-        await FirebaseFirestore.instance.collection("USERS").doc(currentuser!.uid).collection("items").add({
+
+  void addItem(String itemname, int? sellingprice, String description) async {
+    if (itemname.isEmpty  ) {
+      print("Please add item name");
+      return;
+    }
+    if(sellingprice == null){
+      print("Please add price of item");
+      return;
+    }
+
+    try {
+      // Check if an item with the same name already exists
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("USERS")
+          .doc(currentuser!.uid)
+          .collection("items")
+          .where("Item Name", isEqualTo: itemname)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Item with the same name exists, show warning dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Warning'),
+              content: const Text('An item with this name already exists. Do you want to proceed?'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Rename'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Proceed'),
+                  onPressed: () {
+                    // Proceed with adding the item
+                    _saveItem(itemname, sellingprice, description);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // No existing item with the same name, proceed to add
+        _saveItem(itemname, sellingprice, description);
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+ void _saveItem(String itemname, int? sellingprice, String description) async {
+  try {
+    await FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentuser!.uid)
+        .collection("items")
+        .add({
           "Item Name": itemname,
           "Selling Price": sellingprice,
           "Description": description,
         });
-        print("Data entered successfully");
-        _sellingprice.clear();
-        _description.clear();
-        _itemname.clear();
-      } catch (e) {
-        print("Error: $e");
-      }
-    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Success"),
+          content: const Text("Item added successfully."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context,'/customeradd');
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    _itemname.clear();
+    _sellingprice.clear();
+    _description.clear();
+  } catch (e) {
+    print("Error: $e");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text("Failed to add item. Error: $e"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
+}
 
   @override
   void dispose() {
-   _sellingprice.dispose();
-   _itemname.dispose();
-   _description.dispose();
+    _itemname.dispose();
+    _sellingprice.dispose();
+    _description.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,129 +141,118 @@ class _ItemaddState extends State<Itemadd> {
       appBar: AppBar(
         title: const Text("Add Items"),
       ),
-      // drawer: drawer(context),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Name ',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: TextFormField(
-                      controller: _itemname,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'item name',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                      ),
-                    ),
-                  ),
-                ),
-                
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Selling Price',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5.0),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Item *',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              child: TextFormField(
-                controller: _sellingprice,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'selling price',
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _itemname,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Add name of item ',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Description',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: TextFormField(
-                      controller: _description,
-                     
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Description ...',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+              const SizedBox(height: 20),
+              const Text(
+                'Description',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _description,
+                  maxLines: null, // Allow multiple lines of description
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Add description of item',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  ),
+                ),
+              ),
+               const SizedBox(height: 20),
+              const Text(
+                'Price *',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _sellingprice,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'price of item',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      addItem(
+                        _itemname.text.trim(),
+                        int.tryParse(_sellingprice.text.trim()),
+                        _description.text.trim(),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
+                    child: const Text('Save', style: TextStyle(color: Colors.white)),
                   ),
-                ),
-                
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    customer(
-                      _itemname.text,
-                      int.tryParse(_sellingprice.text),
-                      _description.text,
-                    );
-                    Navigator.pushNamed(context, '/invoice');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue, 
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      _itemname.clear();
+                      _sellingprice.clear();
+                      _description.clear();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.white)),
                   ),
-                  child: const Text('Save', style: TextStyle(color: Colors.white)),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                     _sellingprice.clear();
-        _description.clear();
-        _itemname.clear();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.white)),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-  
 }
-

@@ -94,6 +94,15 @@ class _CustomerpageState extends State<Customerpage> {
     }
   }
 
+@override
+  void initState() {
+    
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showInfoBottomSheet(context);
+    });
+  }
+
   Future<void> _sendMessage(String docId) async {
     try {
       if (currentUser == null) {
@@ -194,6 +203,47 @@ Future<bool> showWarning(BuildContext context) async {
   return completer.future;
 }
 
+void _showInfoBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+             const Text(
+                'Info',
+                style: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Tap on Customer Name , to begin invoicing .',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Close'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -464,12 +514,12 @@ class Customeredit extends StatelessWidget {
     
                Text(
       'CustomerID: ${customerData["customerID"]}', // Display customer ID
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
     const SizedBox(width: 45,),
    Text(
-  'Date: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
-  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+  '${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
+  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
 ),
   ]),
              const SizedBox(height: 10,),

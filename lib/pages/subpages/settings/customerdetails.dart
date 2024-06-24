@@ -1,5 +1,7 @@
+import 'package:cloneapp/pages/invoiceadd.dart';
 import 'package:cloneapp/pages/items.dart';
 import 'package:cloneapp/pages/subpages/settings/invoicedetails.dart';
+import 'package:cloneapp/pages/subpages/settings/invoicedraft.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,12 +19,22 @@ class CustomerDetails extends StatefulWidget {
 class _CustomerDetailsState extends State<CustomerDetails> {
   late TextEditingController paymentReceivedController;
   late TextEditingController paymentTotalController;
+  final FirestoreService _firestoreService = FirestoreService();
+  List<Invoice> _invoices = [];
 
   @override
   void initState() {
     super.initState();
     paymentReceivedController = TextEditingController(text: widget.customerData["PaymentReceived"]?.toString() ?? "");
     paymentTotalController = TextEditingController(text: widget.customerData["PaymentTotal"]?.toString() ?? "");
+    _fetchInvoices(); // Fetch invoices when the widget initializes
+  }
+
+  Future<void> _fetchInvoices() async {
+    final List<Invoice> invoices = await _firestoreService.getInvoicesByCustomerId(widget.customerData['customerID']);
+    setState(() {
+      _invoices = invoices;
+    });
   }
 
   @override
@@ -45,7 +57,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Invoicedetails(customerData: widget.customerData),
+                    builder: (context) => InvoiceAdd(customerID: widget!.customerData["customerID"])
                   ),
                 );
               },
@@ -64,7 +76,9 @@ class _CustomerDetailsState extends State<CustomerDetails> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
+        body: RefreshIndicator(
+          onRefresh: _fetchInvoices,
+          child:SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -100,7 +114,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                 tabs: [
                   Tab(text: 'Payment Details'),
                   Tab(text: 'Remarks'),
-                  Tab(text: 'Other'),
+                  Tab(text: 'Invoices'),  // Updated tab text
                 ],
               ),
               Container(
@@ -109,7 +123,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                   children: [
                     _buildPaymentDetails(),
                     _buildRemarks(),
-                    _buildOther(),
+                    _buildInvoices(),  // Updated to display invoices
                   ],
                 ),
               ),
@@ -117,71 +131,81 @@ class _CustomerDetailsState extends State<CustomerDetails> {
           ),
         ),
       ),
+      )
     );
   }
 
-Widget _buildPaymentDetails() {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Payment Details:',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Payment Received:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: paymentReceivedController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Payment Received',
-                      border: OutlineInputBorder(),
+  Widget _buildPaymentDetails() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Payment Details:',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 15),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Payment Received:',
+                      style: TextStyle(fontSize: 16),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Payment Total:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: paymentTotalController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Payment Total',
-                      border: OutlineInputBorder(),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      
+                      controller: paymentReceivedController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                      hintText: '00.00',
+                      hintStyle: TextStyle(fontWeight: FontWeight.w800 , color: Colors.grey , fontSize: 26)
+                       , border: OutlineInputBorder(
+              borderSide: BorderSide(width: 0.0, color: Colors.white),
+            ), 
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Payment Total:',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                   TextFormField(
+                   controller: paymentTotalController,
+                    keyboardType: TextInputType.number,
+                   decoration: const InputDecoration(
+                 hintText: '00.00',
+               hintStyle: TextStyle(fontWeight: FontWeight.w800, color: Colors.grey, fontSize: 26),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(width: 0.0, color: Colors.white),
+            ), 
+            
+          // Add a border to match the style of the other TextFormField
+  ),
+),
 
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildRemarks() {
     return Padding(
@@ -203,27 +227,47 @@ Widget _buildPaymentDetails() {
     );
   }
 
-  Widget _buildOther() {
+  Widget _buildInvoices() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Other Information:',
+            'Invoices',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Customer ID: ${widget.customerData["customerID"]}',
-            style: const TextStyle(fontSize: 18),
-          ),
+         Expanded(
+  child: ListView.builder(
+    itemCount: _invoices.length,
+    itemBuilder: (context, index) {
+      final invoice = _invoices[index];
+      return ListTile(
+        title: Text('Invoice ID: ${invoice.id}'),
+        subtitle: Text('Created At: ${invoice.invoiceDate}'),
+        trailing: IconButton(
+          icon: Icon(Icons.arrow_forward),
+          onPressed: () {
+            // Navigate to another screen or perform an action
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  Invoicedraft(invoiceId: invoice.id), // Replace with your screen
+              ),
+            );
+          },
+        ),
+      );
+    },
+  ),
+)
+
         ],
       ),
     );
   }
 }
-
 
 class Customeredit extends StatefulWidget {
   final Map<String, dynamic> customerData;
@@ -293,7 +337,7 @@ class _CustomereditState extends State<Customeredit> {
     ),
     const SizedBox(width: 45,),
     Text(
-  'Date: ${DateFormat('dd-MM-yyyy').format(widget.customerData["timestamp"].toDate())}',
+  '${DateFormat('dd-MM-yyyy').format(widget.customerData["timestamp"].toDate())}',
   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
 ),
   ]
@@ -538,3 +582,269 @@ class _CustomereditState extends State<Customeredit> {
     );
   }
 }
+
+
+
+class FirestoreService {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
+
+  Future<void> addInvoice(Invoice invoice) async {
+       await _db.collection('USERS').doc(userId).collection('invoices').doc(invoice.id).set(invoice.toMap());
+  }
+
+  Future<List<Invoice>> getInvoicesByCustomerId(String customerID) async {
+    QuerySnapshot querySnapshot = await _db
+          .collection('USERS')
+        .doc(userId)
+        .collection('invoices')
+        .where('customerID', isEqualTo: customerID)
+        .get();
+    return querySnapshot.docs.map((doc) {
+      return Invoice.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+    }).toList();
+  }
+}
+
+class Invoice {
+  final String id;
+  final String customerID;
+  final DateTime invoiceDate;
+  // final double amount;
+
+  Invoice({
+    required this.id,
+    required this.customerID,
+    required this.invoiceDate,
+    // required this.amount,
+  });
+
+  factory Invoice.fromMap(Map<String, dynamic> data, String documentId) {
+    return Invoice(
+      id: documentId,
+      customerID: data['customerID'] ?? '',
+      invoiceDate: (data['invoiceDate'] as Timestamp).toDate(),
+      // amount: data['amount']?.toDouble() ?? 0.0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'customerID': customerID,
+      'invoiceDate': invoiceDate,
+      // 'amount': amount,
+    };
+  }
+}
+
+
+
+// class _CustomerDetailsState extends State<CustomerDetails> {
+//   late TextEditingController paymentReceivedController;
+//   late TextEditingController paymentTotalController;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     paymentReceivedController = TextEditingController(text: widget.customerData["PaymentReceived"]?.toString() ?? "");
+//     paymentTotalController = TextEditingController(text: widget.customerData["PaymentTotal"]?.toString() ?? "");
+//   }
+
+//   @override
+//   void dispose() {
+//     paymentReceivedController.dispose();
+//     paymentTotalController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return DefaultTabController(
+//       length: 3,
+//       child: Scaffold(
+//         appBar: AppBar(
+//           title: const Text('Customer Details'),
+//           actions: [
+//             IconButton(
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => Invoicedetails(customerData: widget.customerData),
+//                   ),
+//                 );
+//               },
+//               icon: const Icon(Icons.add_box),
+//             ),
+//             IconButton(
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => Customeredit(customerData: widget.customerData),
+//                   ),
+//                 );
+//               },
+//               icon: const Icon(Icons.edit),
+//             ),
+//           ],
+//         ),
+//         body: SingleChildScrollView(
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       '${widget.customerData["Salutation"]} ${widget.customerData["First Name"]} ${widget.customerData["Last Name"]}',
+//                       style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     Text(
+//                       'Phone: ${widget.customerData["Mobile"]}',
+//                       style: const TextStyle(fontSize: 18),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     Text(
+//                       'Email: ${widget.customerData["Email"]}',
+//                       style: const TextStyle(fontSize: 18),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     Text(
+//                       'Address: ${widget.customerData["Address"]}',
+//                       style: const TextStyle(fontSize: 18),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const Divider(thickness: 2),
+//               const TabBar(
+//                 tabs: [
+//                   Tab(text: 'Payment Details'),
+//                   Tab(text: 'Remarks'),
+//                   Tab(text: 'Other'),
+//                 ],
+//               ),
+//               Container(
+//                 height: 400, // Adjust the height as needed
+//                 child: TabBarView(
+//                   children: [
+//                     _buildPaymentDetails(),
+//                     _buildRemarks(),
+//                     _buildOther(),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+// Widget _buildPaymentDetails() {
+//   return Padding(
+//     padding: const EdgeInsets.all(16.0),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         const Text(
+//           'Payment Details:',
+//           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 8),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   const Text(
+//                     'Payment Received:',
+//                     style: TextStyle(fontSize: 16),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   TextFormField(
+//                     controller: paymentReceivedController,
+//                     keyboardType: TextInputType.number,
+//                     decoration: const InputDecoration(
+//                       labelText: 'Payment Received',
+//                       border: OutlineInputBorder(),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const SizedBox(width: 16),
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   const Text(
+//                     'Payment Total:',
+//                     style: TextStyle(fontSize: 16),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   TextFormField(
+//                     controller: paymentTotalController,
+//                     keyboardType: TextInputType.number,
+//                     decoration: const InputDecoration(
+//                       labelText: 'Payment Total',
+//                       border: OutlineInputBorder(),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ],
+//     ),
+//   );
+// }
+
+
+//   Widget _buildRemarks() {
+//     return Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           const Text(
+//             'Remarks:',
+//             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//           ),
+//           const SizedBox(height: 8),
+//           Text(
+//             widget.customerData["Remarks"] ?? 'No remarks available.',
+//             style: const TextStyle(fontSize: 18),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildOther() {
+//     return Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           const Text(
+//             'Other Information:',
+//             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//           ),
+//           const SizedBox(height: 8),
+//           Text(
+//             'Customer ID: ${widget.customerData["customerID"]}',
+//             style: const TextStyle(fontSize: 18),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

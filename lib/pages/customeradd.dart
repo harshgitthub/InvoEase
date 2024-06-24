@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloneapp/pages/invoiceadd.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -96,26 +97,77 @@ void _checkIsEmail() {
   });
 
 }
-Future<void> _saveCustomer() async {
+  
+  Future<void> _saveCustomer() async {
   String salutation = _salutation.text.trim();
   String firstname = _firstname.text.trim();
   String lastname = _lastname.text.trim();
-  String remarks= _remarks.text.trim();
+  String remarks = _remarks.text.trim();
   String salesperson = _salesperson.text.trim();
   String email = _email.text.trim();
   String address = _address.text.trim();
   int? workphone = int.tryParse(_workphone.text.trim());
   int? mobile = int.tryParse(_mobile.text.trim());
 
-  if (firstname.isEmpty || !RegExp(r'^[a-zA-Z]+$').hasMatch(firstname) ) {
-    _showErrorDialog(context, "Please fill the required details with valid first name.");
+  // Validate required fields
+  if (firstname.isEmpty || !RegExp(r'^[a-zA-Z]+$').hasMatch(firstname)) {
+    _showErrorDialog(context, "Please fill the required details with a valid first name.");
     return;
   }
-  if (mobile==null) {
+  if (mobile == null) {
     _showErrorDialog(context, "Please fill the mobile number field");
     return;
   }
 
+  // Check if customer with the same first name and last name already exists
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser!.uid)
+        .collection("customers")
+        .where("First Name", isEqualTo: firstname)
+        .where("Last Name", isEqualTo: lastname)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // Customer already exists, show warning dialog
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.warning,
+        animType: AnimType.bottomSlide,
+        title: 'Warning',
+        desc: 'Customer with this first name and last name already exists. Do you want to proceed?',
+        btnCancelOnPress: () {
+          // Cancel action
+        },
+        btnCancelText: 'Rename',
+        btnOkText: 'Proceed',
+        btnOkOnPress: () async {
+          // Proceed with saving
+          await _saveCustomerToDatabase(salutation, firstname, lastname, remarks, salesperson, email, address, workphone, mobile);
+        },
+      ).show();
+    } else {
+      // No existing customer, proceed to save
+      await _saveCustomerToDatabase(salutation, firstname, lastname, remarks, salesperson, email, address, workphone, mobile);
+    }
+  } catch (e) {
+    print("Error: $e");
+    // Handle error, show error dialog or snackbar
+  }
+}
+
+Future<void> _saveCustomerToDatabase(
+  String salutation,
+  String firstname,
+  String lastname,
+  String remarks,
+  String salesperson,
+  String email,
+  String address,
+  int? workphone,
+  int? mobile,
+) async {
   try {
     CollectionReference customersCollection = FirebaseFirestore.instance
         .collection("USERS")
@@ -150,32 +202,18 @@ Future<void> _saveCustomer() async {
     _salesperson.clear();
 
     // Navigate to invoiceadd screen with data
-    Navigator.pushNamed(
+    Navigator.push(
       context,
-      '/invoiceadd',
-      arguments: CustomerData(
-        salutation: salutation,
-        firstName: firstname,
-        lastName: lastname,
-        email: email,
-        workPhone: workphone,
-        mobile: mobile,
-        address: address,
-        remarks: remarks,
-        salesperson: salesperson,
-        customerId: _customerID
-      ),
+     MaterialPageRoute(
+                    builder: (context) => InvoiceAdd(customerID:_customerID)
+    )
     );
-
   } catch (e) {
     print("Error: $e");
     // Handle error, show error dialog or snackbar
   }
 }
 
-  
-  
-  
   void _generateCustomerId() {
     const length = 6;
     const chars = 'ABC1234';
@@ -203,9 +241,11 @@ void _showErrorDialog(BuildContext context, String message) {
 
  @override
   Widget build(BuildContext context) {
+      DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd-MM-yyyy').format(now); 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Customer"),
+        title: const Text("New Customer"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -219,12 +259,12 @@ void _showErrorDialog(BuildContext context, String message) {
     
     Text(
       'Customer ID: $_customerID', // Display customer ID
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
     const SizedBox(width: 45,),
     Text(
-  'Date: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
-  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+  '$formattedDate',
+  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
 
     
   ],
@@ -348,8 +388,8 @@ void _showErrorDialog(BuildContext context, String message) {
             });
           }                 ))),
            if (! isPhoneValid && _mobile.text.isNotEmpty)
-         Padding(
-            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+         const Padding(
+            padding: EdgeInsets.only(top: 4.0, left: 12.0),
             child: Text(
               'Please enter a valid mobile Number',
               style: TextStyle(color: Colors.red, fontSize: 12.0),
@@ -384,8 +424,8 @@ void _showErrorDialog(BuildContext context, String message) {
           }
                     )  )),
              if (! isPhoneValid && _workphone.text.isNotEmpty)
-         Padding(
-            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+         const Padding(
+            padding: EdgeInsets.only(top: 4.0, left: 12.0),
             child: Text(
               'Please enter a valid mobile Number',
               style: TextStyle(color: Colors.red, fontSize: 12.0),
@@ -519,6 +559,7 @@ void _showErrorDialog(BuildContext context, String message) {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      Navigator.pushNamed(context, '/customer');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
@@ -564,3 +605,142 @@ class CustomerData {
     required this.customerId, // Initialize customerId in the constructor
   });
 }
+
+// Future<void> _saveCustomer() async {
+//    final DocumentSnapshot invoicedata;
+   
+//   String salutation = _salutation.text.trim();
+//   String firstname = _firstname.text.trim();
+//   String lastname = _lastname.text.trim();
+//   String remarks= _remarks.text.trim();
+//   String salesperson = _salesperson.text.trim();
+//   String email = _email.text.trim();
+//   String address = _address.text.trim();
+//   int? workphone = int.tryParse(_workphone.text.trim());
+//   int? mobile = int.tryParse(_mobile.text.trim());
+
+//   if (firstname.isEmpty || !RegExp(r'^[a-zA-Z]+$').hasMatch(firstname) ) {
+//     _showErrorDialog(context, "Please fill the required details with valid first name.");
+//     return;
+//   }
+//   if (mobile==null) {
+//     _showErrorDialog(context, "Please fill the mobile number field");
+//     return;
+//   }
+
+//   try {
+//     CollectionReference customersCollection = FirebaseFirestore.instance
+//         .collection("USERS")
+//         .doc(currentUser!.uid)
+//         .collection("customers");
+
+//     Timestamp now = Timestamp.now(); // Get current timestamp
+
+//     await customersCollection.doc(_customerID).set({
+//       "Salutation": salutation,
+//       "First Name": firstname,
+//       "Last Name": lastname,
+//       "Remarks": remarks,
+//       "Salesperson": salesperson,
+//       "Email": email,
+//       "Work-phone": workphone,
+//       "Mobile": mobile,
+//       "Address": address,
+//       "customerID": _customerID,
+//       "timestamp": now, // Add timestamp field
+//     });
+
+//     // Clear text fields after saving
+//     _salutation.clear();
+//     _firstname.clear();
+//     _lastname.clear();
+//     _email.clear();
+//     _workphone.clear();
+//     _mobile.clear();
+//     _address.clear();
+//     _remarks.clear();
+//     _salesperson.clear();
+
+//     // Navigate to invoiceadd screen with data
+//     Navigator.pushNamed(
+//       context,
+//       '/invoiceadd',
+//       arguments: CustomerData(
+//         salutation: salutation,
+//         firstName: firstname,
+//         lastName: lastname,
+//         email: email,
+//         workPhone: workphone,
+//         mobile: mobile,
+//         address: address,
+//         remarks: remarks,
+//         salesperson: salesperson,
+//         customerId: _customerID
+//       ),
+//     );
+
+//   } catch (e) {
+//     print("Error: $e");
+//     // Handle error, show error dialog or snackbar
+//   }
+// }
+
+  
+  //  Future<void> _saveCustomer() async {
+  //   String salutation = _salutation.text.trim();
+  //   String firstname = _firstname.text.trim();
+  //   String lastname = _lastname.text.trim();
+  //   String remarks = _remarks.text.trim();
+  //   String salesperson = _salesperson.text.trim();
+  //   String email = _email.text.trim();
+  //   String address = _address.text.trim();
+  //   int? workphone = int.tryParse(_workphone.text.trim());
+  //   int? mobile = int.tryParse(_mobile.text.trim());
+
+  //   // Validate required fields
+  //   if (firstname.isEmpty || !RegExp(r'^[a-zA-Z]+$').hasMatch(firstname)) {
+  //     _showErrorDialog(context, "Please fill the required details with a valid first name.");
+  //     return;
+  //   }
+  //   if (mobile == null) {
+  //     _showErrorDialog(context, "Please fill the mobile number field");
+  //     return;
+  //   }
+
+  //   // Check if customer with the same first name and last name already exists
+  //   try {
+  //     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //         .collection("USERS")
+  //         .doc(currentUser!.uid)
+  //         .collection("customers")
+  //         .where("First Name", isEqualTo: firstname)
+  //         .where("Last Name", isEqualTo: lastname)
+  //         .get();
+
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       // Customer already exists, show warning dialog
+  //       AwesomeDialog(
+  //         context: context,
+  //         dialogType: DialogType.warning,
+  //         animType: AnimType.bottomSlide,
+  //         title: 'Warning',
+  //         desc: 'Customer with this first name and last name already exists. Do you want to proceed?',
+  //         btnCancelOnPress: () {
+  //           // Cancel action
+  //         },
+  //         btnCancelText: 'Rename',
+  //         btnOkText: 'Proceed',
+  //         btnOkOnPress: () {
+  //           // Proceed with saving
+  //           _saveCustomer();
+  //         },
+  //       ).show();
+  //     } else {
+  //       // No existing customer, proceed to save
+  //       _saveCustomer();
+  //     }
+  //   } catch (e) {
+  //     print("Error: $e");
+  //     // Handle error, show error dialog or snackbar
+  //   }
+  // }

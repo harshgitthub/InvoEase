@@ -306,7 +306,7 @@
     void _addTable() {
       _addElement(
         TableWidget(columns: 2, rows: 3), // Example with 2 columns and 3 rows
-        Offset(100, 100),
+        const Offset(100, 100),
       );
     }
 
@@ -317,7 +317,7 @@
           height: double.infinity,
           color: Colors.black,
         ),
-        Offset(50, 0),
+        const Offset(50, 0),
       );
     }
 
@@ -325,14 +325,14 @@
    Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text('Invoice Design'),
+      title: const Text('Invoice Design'),
       actions: [
         IconButton(
-          icon: Icon(Icons.save),
+          icon: const Icon(Icons.save),
           onPressed: _saveLayout,
         ),
         IconButton(
-          icon: Icon(Icons.upload_file),
+          icon: const Icon(Icons.upload_file),
           onPressed: _loadLayout,
         ),
       ],
@@ -343,7 +343,7 @@
         children: _elements.isNotEmpty
             ? _elements
             : [
-                Center(
+                const Center(
                   child: Text(
                     'Tap + button to add elements',
                     style: TextStyle(fontSize: 18),
@@ -358,34 +358,34 @@
       children: [
         FloatingActionButton(
           onPressed: _uploadImage,
-          child: Icon(Icons.add_a_photo),
+          child: const Icon(Icons.add_a_photo),
           heroTag: 'photo',
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _addTable,
-          child: Icon(Icons.table_chart),
+          child: const Icon(Icons.table_chart),
           heroTag: 'table',
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _addColumn,
-          child: Icon(Icons.line_style),
+          child: const Icon(Icons.line_style),
           heroTag: 'column',
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _undoAction,
-          child: Icon(Icons.undo),
+          child: const Icon(Icons.undo),
           heroTag: 'undo',
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _redoAction,
-          child: Icon(Icons.redo),
+          child: const Icon(Icons.redo),
           heroTag: 'redo',
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     ),
   );

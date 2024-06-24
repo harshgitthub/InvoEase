@@ -51,10 +51,10 @@ class _UsersScreenState extends State<UsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Switch User"),
+        title: const Text("Switch User"),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
               ? Center(child: Text(_errorMessage!))
               : Padding(
@@ -68,10 +68,10 @@ class _UsersScreenState extends State<UsersScreen> {
                           subtitle: Text(_currentUser!['name'] ?? 'No Name'),
                           onTap: () => _selectProfile(_currentUser!),
                         ),
-                        Divider(),
+                        const Divider(),
                       ],
                       if (_linkedAccounts.isNotEmpty) ...[
-                        Text('Linked Accounts:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text('Linked Accounts:', style: TextStyle(fontWeight: FontWeight.bold)),
                         ..._linkedAccounts.map((account) => Column(
                               children: [
                                 ListTile(
@@ -79,7 +79,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                   subtitle: Text(account['name'] ?? 'No Name'),
                                   onTap: () => _selectProfile(account),
                                 ),
-                                if (account != _linkedAccounts.last) Divider(),
+                                if (account != _linkedAccounts.last) const Divider(),
                               ],
                             )),
                       ],
@@ -88,7 +88,7 @@ class _UsersScreenState extends State<UsersScreen> {
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToLinkAccountScreen,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

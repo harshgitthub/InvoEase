@@ -1,19 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// ignore: unused_import
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
-    Home({super.key});
+  Home({super.key});
 
   final currentuser = FirebaseAuth.instance.currentUser;
-  
-
 
   @override
   Widget build(BuildContext context) {
-     return DefaultTabController(
+    return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
@@ -33,25 +30,53 @@ class Home extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.support_agent_rounded),
               onPressed: () {
-                // Implement search functionality
+                // Implement support agent functionality
               },
             ),
             IconButton(
               icon: const Icon(Icons.notification_add_rounded),
               onPressed: () {
-                // Implement filter functionality
+                // Implement notification functionality
               },
             ),
           ],
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'Tab 1'),
+              Tab(text: 'Add Customer'),
               Tab(text: 'Tab 2'),
-              Tab(text: 'Tab3'),
+              Tab(text: 'Tab 3'),
             ],
           ),
         ),
-        drawer: drawer(context),    
+        drawer: drawer(context),
+        body: TabBarView(
+          children: [
+            Center(
+              child: ElevatedButton.icon(
+                
+                onPressed: () {
+                  Navigator.pushNamed(context, '/customer');
+                },
+                icon: const Icon(Icons.person_add, color: Colors.amber),
+                label: const Text(
+                  'Add Customer',
+                  style: TextStyle(fontSize: 18, color:Colors.white) ,
+                ),
+                style: ElevatedButton.styleFrom(
+                 backgroundColor: Colors.amber,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  elevation: 10,
+                  shadowColor: Colors.black.withOpacity(0.5),
+                ),
+              ),
+            ),
+            const Center(child: Text('Tab 2 Content')),
+            const Center(child: Text('Tab 3 Content')),
+          ],
+        ),
       ),
     );
   }
@@ -242,7 +267,7 @@ Drawer drawer(BuildContext context) {
         .snapshots(),
     builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else {
         if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error}"));
@@ -266,7 +291,7 @@ Drawer drawer(BuildContext context) {
             );
           });
 
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else {
           var userData = snapshot.data!;
           var organization = userData["Organisation Name"] ?? "No Organization";
@@ -293,7 +318,7 @@ Drawer drawer(BuildContext context) {
                             ? NetworkImage(imageUrl)
                             : null,
                         child: imageUrl == null
-                            ? Icon(Icons.person, size: 30, color: Colors.white)
+                            ? const Icon(Icons.person, size: 30, color: Colors.white)
                             : null,
                       ),
                     ),
@@ -309,6 +334,9 @@ Drawer drawer(BuildContext context) {
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                           decoration: TextDecoration.underline, 
+                           decorationColor: Colors.white, 
+
                         ),
                       ),
                     ),
