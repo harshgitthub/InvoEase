@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 class CustomerDetails extends StatefulWidget {
   final Map<String, dynamic> customerData;
 
-  const CustomerDetails({Key? key, required this.customerData}) : super(key: key);
+  const CustomerDetails({super.key, required this.customerData});
 
   @override
   _CustomerDetailsState createState() => _CustomerDetailsState();
@@ -247,7 +247,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
         title: Text('Invoice ID: ${invoice.id}'),
         subtitle: Text('Created At: ${invoice.invoiceDate}'),
         trailing: IconButton(
-          icon: Icon(Icons.arrow_forward),
+          icon: const Icon(Icons.arrow_forward),
           onPressed: () {
             // Navigate to another screen or perform an action
             Navigator.push(
@@ -272,7 +272,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
 class Customeredit extends StatefulWidget {
   final Map<String, dynamic> customerData;
 
-  const Customeredit({Key? key, required this.customerData}) : super(key: key);
+  const Customeredit({super.key, required this.customerData});
 
   @override
   _CustomereditState createState() => _CustomereditState();
@@ -333,12 +333,12 @@ class _CustomereditState extends State<Customeredit> {
     
                Text(
         'CustomerID:${widget.customerData["customerID"]}', // Display customer ID
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
     const SizedBox(width: 45,),
     Text(
   '${DateFormat('dd-MM-yyyy').format(widget.customerData["timestamp"].toDate())}',
-  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
 ),
   ]
                ),

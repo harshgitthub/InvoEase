@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,11 +19,11 @@ class _ItemaddState extends State<Itemadd> {
 
   void addItem(String itemname, int? sellingprice, String description) async {
     if (itemname.isEmpty  ) {
-      print("Please add item name");
+      _showErrorDialog(context, "Add Name of item");
       return;
     }
     if(sellingprice == null){
-      print("Please add price of item");
+      _showErrorDialog(context, "Add price of item"); 
       return;
     }
 
@@ -101,7 +102,6 @@ class _ItemaddState extends State<Itemadd> {
         );
       },
     );
-
     _itemname.clear();
     _sellingprice.clear();
     _description.clear();
@@ -126,6 +126,21 @@ class _ItemaddState extends State<Itemadd> {
     );
   }
 }
+ void _showErrorDialog(BuildContext context, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.error,
+    animType: AnimType.bottomSlide,
+    title: 'Error',
+    desc: message,
+    btnOkText: 'OK',
+    btnOkColor: Colors.red,
+    btnOkOnPress: () {
+      // Optionally perform some action on button press
+    },
+  ).show();
+}
+
 
   @override
   void dispose() {
@@ -137,19 +152,54 @@ class _ItemaddState extends State<Itemadd> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add Items"),
-      ),
+    final currentUser = FirebaseAuth.instance.currentUser ;
+  return 
+   StreamBuilder(
+    stream: FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser?.uid)
+        .collection("details")
+        .doc(currentUser?.uid)
+        .snapshots(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Loading"),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      } else if (snapshot.hasError) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Loading"),
+          ),
+          body: Center(child: Text("Error: ${snapshot.error}")),
+        );
+      } else if (!snapshot.hasData || !snapshot.data!.exists) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("No data"),
+          ),
+          body: const Center(child: Text("No data available")),
+        );
+      } else {
+        var userData = snapshot.data!;
+        var item = userData["item"] ?? "Default Item Name";
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Add $item'),
+          ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Item *',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+               Text(
+                '$item *',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Container(
@@ -159,10 +209,10 @@ class _ItemaddState extends State<Itemadd> {
                 ),
                 child: TextFormField(
                   controller: _itemname,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Add name of item ',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                    hintText: 'Add name of $item ',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                   ),
                 ),
               ),
@@ -180,10 +230,10 @@ class _ItemaddState extends State<Itemadd> {
                 child: TextFormField(
                   controller: _description,
                   maxLines: null, // Allow multiple lines of description
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Add description of item',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                    hintText: 'Add description of $item',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                   ),
                 ),
               ),
@@ -201,10 +251,10 @@ class _ItemaddState extends State<Itemadd> {
                 child: TextFormField(
                   controller: _sellingprice,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'price of item',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                    hintText: 'price of $item',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
                   ),
                 ),
               ),
@@ -252,7 +302,9 @@ class _ItemaddState extends State<Itemadd> {
             ],
           ),
         ),
-      ),
-    );
+      )
+        );
+      }
+    });
   }
 }

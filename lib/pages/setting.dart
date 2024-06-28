@@ -100,57 +100,9 @@ class _SettingState extends State<Setting> {
               leading: const Icon(Icons.room_preferences),
               title: const Text('Preferences'),
               onTap: () {
-               Navigator.pushNamed(context, '/password');
+               Navigator.pushNamed(context, '/preference');
               },
             ),
-
-          //   const Divider(),
-          // ListTile(
-          //   leading: const Icon(Icons.currency_bitcoin),
-          //   title: const Text('Currencies'),
-          //   onTap: () {
-          //     Navigator.pushNamed(context, '/pw');
-          //   },
-          // ),
-        //   ListTile(
-        //     leading: const Icon(Icons.percent_rounded),
-        //     title: const Text('Taxes'),
-        //     onTap: () {
-             
-        //     },
-        //   ),
-          
-        //   ListTile(
-        //     leading: const Icon(Icons.picture_as_pdf),
-        //     title: const Text('PDF Templates'),
-        //     onTap: () {
-             
-        //     },
-        //   ),
-
-        //   ListTile(
-        //     leading: const Icon(Icons.payment),
-        //     title: const Text('Online Payment Gateways'),
-        //     onTap: () {
-             
-        //     },
-        //   ),
-        //   const Divider(),
-         
-        //  ListTile(
-        //     leading: const Icon(Icons.list_rounded),
-        //     title: const Text('Opening Screen - Invoice List'),
-        //     onTap: () {
-              
-        //     },
-        //   ),
-        //   ListTile(
-        //     leading: const Icon(Icons.upload),
-        //     title: const Text('Image Upload Resolution'),
-        //     onTap: () {
-             
-        //     },
-        //   ),
           ListTile(
             leading: const Icon(Icons.security),
             title: const Text('Privacy & Security'),

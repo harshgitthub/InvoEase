@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloneapp/pages/home.dart';
 import 'package:cloneapp/pages/invoice.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,20 +42,55 @@ class _ItemsState extends State<Items> {
  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Items"),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return 
+      StreamBuilder(
+    stream: FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser?.uid)
+        .collection("details")
+        .doc(currentUser?.uid)
+        .snapshots(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Items"),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      } else if (snapshot.hasError) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Items"),
+          ),
+          body: Center(child: Text("Error: ${snapshot.error}")),
+        );
+      } else if (!snapshot.hasData || !snapshot.data!.exists) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Items"),
+          ),
+          body: const Center(child: Text("No data available")),
+        );
+      } else {
+        var userData = snapshot.data!;
+        var item = userData["item"] ?? "Default Item Name";
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(item),
+            leading: Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                );
               },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            );
-          },
-        ),
+            ),
         actions: [
           IconButton(onPressed: (){
             Navigator.pushNamed(context,'/itemadd');
@@ -75,13 +111,6 @@ class _ItemsState extends State<Items> {
         ],
       ),
       drawer: drawer(context),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Colors.amber,
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, '/itemadd');
-      //   },
-      //   child: const Icon(Icons.add),
-      // ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("USERS")
@@ -111,13 +140,6 @@ class _ItemsState extends State<Items> {
 
                   return ListTile(
                     contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    // leading: CircleAvatar(
-                    //   backgroundColor: Colors.blueAccent,
-                    //   child: Text(
-                    //     "${index + 1}",
-                    //     style: const TextStyle(color: Colors.white),
-                    //   ),
-                    // ),
                     title: Text(
                       "${doc["Item Name"]}",
                       style: const TextStyle(
@@ -166,7 +188,7 @@ class _ItemsState extends State<Items> {
                         );
                       },
                     
-                      child: const Text('Update Item' , style: TextStyle(fontSize: 14 , color: Colors.black),),
+                      child:  Text('Update $item ' , style: const TextStyle(fontSize: 14 , color: Colors.black),),
                     ),
                   
                   );
@@ -181,9 +203,12 @@ class _ItemsState extends State<Items> {
           return const Center(child: CircularProgressIndicator());
         },
       ),
-    );
-  }
-
+        );
+      }
+    }
+      );
+      }
+      
   void _showFilterDialog() {
     showDialog(
       context: context,
@@ -342,13 +367,45 @@ class _EdititemState extends State<Edititem> {
             "Selling Price": sellingPrice,
             "Description": description,
           });
-      print('Document updated successfully');
-      Navigator.of(context).push(_createRoute());
+      _showSuccessDialog(context, "Item Updated successfully");
+      Navigator.pushNamed(context, '/invoiceview');
+      
     } catch (e) {
-      print('Error updating document: $e');
+      _showErrorDialog(context, "Failed to Update item");
+      // print('Error updating document: $e');
       // Handle error as needed
     }
   }
+   void _showErrorDialog(BuildContext context, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.error,
+    animType: AnimType.bottomSlide,
+    title: 'Error',
+    desc: message,
+    btnOkText: 'OK',
+    btnOkColor: Colors.red,
+    btnOkOnPress: () {
+
+      // Optionally perform some action on button press
+    },
+  ).show();
+}
+ void _showSuccessDialog(BuildContext context, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.success,
+    animType: AnimType.topSlide,
+    title: 'Success',
+    desc: message,
+    btnOkText: 'OK',
+    btnOkColor: const Color.fromARGB(255, 59, 190, 85),
+    btnOkOnPress: () {
+      
+      // Optionally perform some action on button press
+    },
+  ).show();
+}
   void deleteUserItem() async {
   // try {
   //   await FirebaseFirestore.instance
@@ -410,26 +467,63 @@ Future<bool> showWarning(BuildContext context) async {
 
 @override
 Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text("Edit Item"),
-    ),
-    body: Padding(
+  final currentUser = FirebaseAuth.instance.currentUser ;
+  return 
+   StreamBuilder(
+    stream: FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser?.uid)
+        .collection("details")
+        .doc(currentUser?.uid)
+        .snapshots(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Loading"),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      } else if (snapshot.hasError) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Loading"),
+          ),
+          body: Center(child: Text("Error: ${snapshot.error}")),
+        );
+      } else if (!snapshot.hasData || !snapshot.data!.exists) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("No data"),
+          ),
+          body: const Center(child: Text("No data available")),
+        );
+      } else {
+        var userData = snapshot.data!;
+        var item = userData["item"] ?? "Default Item Name";
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Edit $item'),
+          ),
+    body:SingleChildScrollView(
+      child: 
+    Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Item Name ',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+           Text(
+            '$item Name ',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: _itemname,
-            decoration: const InputDecoration(
-              hintText: 'add name of item',
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration:  InputDecoration(
+              hintText: 'add name of $item',
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
           ),
           const SizedBox(height: 16),
@@ -441,10 +535,10 @@ Widget build(BuildContext context) {
           TextFormField(
             controller: _description,
             maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: 'add description of item',
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration:  InputDecoration(
+              hintText: 'add description of $item',
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
           ),
           const SizedBox(height: 16),
@@ -470,7 +564,7 @@ Widget build(BuildContext context) {
               Expanded(
                 child: ElevatedButton(
                   onPressed: updateUser,
-                  child: const Text('Update Item'),
+                  child: const Text('Update'),
                 ),
               ),
               const SizedBox(width: 16),
@@ -480,7 +574,7 @@ Widget build(BuildContext context) {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red, // Red color for delete button
                   ),
-                  child: const Text('Delete Item' , style:  TextStyle(color: Colors.white),),
+                  child: const Text('Delete' , style:  TextStyle(color: Colors.white),),
                 ),
               ),
             ],
@@ -493,27 +587,19 @@ Widget build(BuildContext context) {
                 onPressed: () {
                   Navigator.pop(context); // Close the edit item page
                 },
-                child: const Text('Cancel'),
+                child: const Text('Back'),
               ),
             ],
           ),
         ],
       ),
     ),
+    )
   );
+      }
+    });
 }
+    
 
-
-  Route _createRoute() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => InvoiceView(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
-      },
-    );
-  }
 
 }

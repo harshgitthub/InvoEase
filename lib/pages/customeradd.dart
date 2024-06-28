@@ -471,7 +471,7 @@ void _showErrorDialog(BuildContext context, String message) {
         ),
         if (!isEmail && _email.text.isNotEmpty)
        const   Padding(
-            padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+            padding: EdgeInsets.only(top: 4.0, left: 12.0),
             child: Text(
               'Please enter a valid email address',
               style: TextStyle(color: Colors.red, fontSize: 12.0),
@@ -605,6 +605,7 @@ class CustomerData {
     required this.customerId, // Initialize customerId in the constructor
   });
 }
+
 
 // Future<void> _saveCustomer() async {
 //    final DocumentSnapshot invoicedata;

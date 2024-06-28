@@ -358,32 +358,32 @@
       children: [
         FloatingActionButton(
           onPressed: _uploadImage,
-          child: const Icon(Icons.add_a_photo),
           heroTag: 'photo',
+          child: const Icon(Icons.add_a_photo),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _addTable,
-          child: const Icon(Icons.table_chart),
           heroTag: 'table',
+          child: const Icon(Icons.table_chart),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _addColumn,
-          child: const Icon(Icons.line_style),
           heroTag: 'column',
+          child: const Icon(Icons.line_style),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _undoAction,
-          child: const Icon(Icons.undo),
           heroTag: 'undo',
+          child: const Icon(Icons.undo),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
           onPressed: _redoAction,
-          child: const Icon(Icons.redo),
           heroTag: 'redo',
+          child: const Icon(Icons.redo),
         ),
         const SizedBox(height: 16),
       ],
@@ -436,13 +436,13 @@
     @override
     Widget build(BuildContext context) {
       return Draggable(
-        child: child,
         feedback: Material(
           child: child,
         ),
         childWhenDragging: Container(),
         onDraggableCanceled: (velocity, offset) {},
         onDragEnd: onDragEnd,
+        child: child,
       );
     }
   }
