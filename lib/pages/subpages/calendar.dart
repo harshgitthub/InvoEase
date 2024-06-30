@@ -79,14 +79,12 @@ Future<void> _deletetask(BuildContext context, String taskId) async {
             );
           },
         ),
+        actions: [IconButton(onPressed:  () {
+          Navigator.pushNamed(context, '/taskadd');
+        },icon: Icon(Icons.bookmark_add_outlined) ,iconSize: 30,)],
       ),
       drawer: drawer(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/taskadd');
-        },
-        child: const Icon(Icons.add),
-      ),
+      
       body: user != null
           ? StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -114,21 +112,18 @@ Future<void> _deletetask(BuildContext context, String taskId) async {
                     final dateTime =
                         (noteData['dateTime'] as Timestamp).toDate();
 
-                    return Card(
-                      elevation: 1,
-                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                      child: ListTile(
+                    return ListTile(
                         contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
                         title: Text(task , style: const TextStyle(fontSize:21 ),),
                         subtitle: Text(
                           '${dateTime.toLocal()}',
-                          style: const TextStyle(fontSize: 18.0 , fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 18.0 ,),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit , color: Colors.blue , size: 30,),
+                              icon: const Icon(Icons.edit , color: Colors.blue , size: 25,),
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -142,12 +137,11 @@ Future<void> _deletetask(BuildContext context, String taskId) async {
                               },
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete ,  color: Colors.red , size: 30,),
+                              icon: const Icon(Icons.delete ,  color: Colors.black , size: 25,),
                               onPressed: () => _deletetask(context , noteId),
                             ),
                           ],
                         ),
-                      ),
                     );
                   },
                 );

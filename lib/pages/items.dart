@@ -79,7 +79,7 @@ class _ItemsState extends State<Items> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(item),
+            title: const Text('Item'),
             leading: Builder(
               builder: (BuildContext context) {
                 return IconButton(
@@ -504,7 +504,7 @@ Widget build(BuildContext context) {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('Edit $item'),
+            title: const Text('Edit item'),
           ),
     body:SingleChildScrollView(
       child: 

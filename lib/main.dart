@@ -1,5 +1,5 @@
 import 'package:cloneapp/firebase_options.dart';
-import 'package:cloneapp/localization/locales.dart';
+// import 'package:cloneapp/localization/locales.dart';
 import 'package:cloneapp/pages/customeradd.dart';
 import 'package:cloneapp/pages/customerpage.dart';
 import 'package:cloneapp/pages/details.dart';
@@ -27,7 +27,7 @@ import 'package:cloneapp/pages/subpages/organisation.dart';
 import 'package:cloneapp/pages/subpages/settings/applock.dart';
 import 'package:cloneapp/pages/subpages/settings/customerdetails.dart';
 import 'package:cloneapp/pages/subpages/settings/invoicedetails.dart';
-import 'package:cloneapp/pages/subpages/settings/recover.dart';
+// import 'package:cloneapp/pages/subpages/settings/recover.dart';
 import 'package:cloneapp/pages/subpages/settings/taskadd.dart';
 import 'package:cloneapp/pages/subpages/profile.dart';
 import 'package:cloneapp/pages/verify.dart';
@@ -52,6 +52,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  
+
   runApp(MyApp());
 }
 
@@ -66,11 +68,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final FlutterLocalization localization = FlutterLocalization.instance;
+  // final FlutterLocalization localization = FlutterLocalization.instance;
 
   @override
   void initState() {
-    configureLocalization();
+    // configureLocalization();
     super.initState();
   }
 
@@ -81,8 +83,8 @@ class _MyAppState extends State<MyApp> {
     
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      supportedLocales: localization.supportedLocales,
-      localizationsDelegates: localization.localizationsDelegates,
+      // supportedLocales: localization.supportedLocales,
+      // localizationsDelegates: localization.localizationsDelegates,
     //  localizationsDelegates: const [
     //     GlobalMaterialLocalizations.delegate,
     //     GlobalWidgetsLocalizations.delegate,
@@ -102,7 +104,7 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const Login(),
         '/home': (context) => Home(),
         '/estimate': (context) => const Estimate(),
-        '/taskadd': (context) => const  taskaddScreen(),
+        // '/taskadd': (context) => const  TaskAddScreen(),
         '/invoice': (context) => const InvoiceView(),
         '/paymentlink': (context) => const Paymentlink(),
         '/paymentreceive': (context) => const Paymentreceived(),
@@ -122,28 +124,29 @@ class _MyAppState extends State<MyApp> {
         '/note': (context) => const Calendar(),
         '/notesadd': (context) => const NotesAddScreen(),
         // '/link_account': (context) => LinkAccountScreen(),
-       '/preference': (context)=> const Preferences(),
+      //  '/preference': (context)=> const Preferences(),
         '/invoicetemplate':(context)=> const InvoiceTemplate(),
         '/verify':(context)=> const Verify(),
         '/password':(context)=>  DesignPage(),
-        '/pw':(context)=>  Invoicedetails(customerData: customerData),
+        // '/pw':(context)=>  Invoicedetails(customerData: customerData),
         '/notepage':(context)=> Notes(),
         '/customerdetail':(context)=>  CustomerDetails(customerData: customerData),
-        '/billingpage2':(context)=> BillingPage2(invoicedData: invoiced),
-        '/additems':(context)=> const AddItems()
+        // '/billingpage2':(context)=> BillingPage2(invoicedData: invoiced),
+        '/additems':(context)=> const AddItems(),
+        '/delete': (context) => const DeleteUser()
        
       },
     );
-  }
- void configureLocalization(){
-  localization.init(mapLocales: LOCALES,initLanguageCode: "en");
-  localization.onTranslatedLanguage = onTranslatedLanguage ;
-  }
-  void onTranslatedLanguage(Locale? locale){
-    setState(() {
+//   }
+//  void configureLocalization(){
+//   localization.init(mapLocales: LOCALES,initLanguageCode: "en");
+//   localization.onTranslatedLanguage = onTranslatedLanguage ;
+//   }
+//   void onTranslatedLanguage(Locale? locale){
+//     setState(() {
       
-    });
-  }
+//     });
+//   }
 }
 
  // // Activate Firebase App Check with appropriate providers
@@ -157,3 +160,4 @@ class _MyAppState extends State<MyApp> {
   //   // For iOS/macOS, choose a provider (e.g., debug, Device Check, App Attest)
   //   appleProvider: AppleProvider.appAttest,
   // );
+}

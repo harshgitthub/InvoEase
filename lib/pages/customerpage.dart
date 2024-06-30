@@ -331,6 +331,13 @@ void _showInfoBottomSheet(BuildContext context) {
     
 
     child:  ListTile(
+     leading: CircleAvatar(
+    child: Text(
+      '${doc['First Name'][0]}',
+      style: TextStyle(color: Colors.white),
+    ),
+    backgroundColor: Colors.blue, // You can set the background color as you prefer
+  ),
   contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
   subtitle: Row(
     children: [

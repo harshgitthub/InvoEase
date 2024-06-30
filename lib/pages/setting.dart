@@ -93,7 +93,7 @@ class _SettingState extends State<Setting> {
               leading: const Icon(Icons.person),
               title: const Text('Users'),
               onTap: () {
-                Navigator.pushNamed(context, '/users');
+                Navigator.pushNamed(context, '/delete');
               },
             ),
             ListTile(

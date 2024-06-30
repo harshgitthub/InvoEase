@@ -1,4 +1,5 @@
 import 'package:cloneapp/pages/customerpage.dart';
+import 'package:cloneapp/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -213,7 +214,7 @@ class _LoginState extends State<Login> {
             box1.put('password', password);
           }
           _showSuccessDialog();
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Customerpage()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  const Customerpage()));
         } else {
           _showErrorDialog("Email is not verified. Please verify your email.");
         }

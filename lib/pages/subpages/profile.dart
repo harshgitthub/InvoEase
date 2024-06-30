@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +21,8 @@ class _ProfileState extends State<Profile> {
   // final _propreitor = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
   String? imageUrl;
+  final ImagePicker _logoPicker = ImagePicker();
+  String? logoUrl;
 
   final List<String> _professions = [
     'Engineer',
@@ -56,12 +56,29 @@ class _ProfileState extends State<Profile> {
       _gst.text = userDoc['gst'];
       _selectedProfession = userDoc['Profession'];
       imageUrl = userDoc['Profile Image'];
+      logoUrl = userDoc['Logo'];
     });
   }
 
   Future<void> pickImage(ImageSource source) async {
     try {
       XFile? pickedImage = await _imagePicker.pickImage(source: source);
+
+      if (pickedImage != null) {
+        await uploadImageToFirebase(File(pickedImage.path));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.black,
+          content: Text("Failed to upload image: $e"),
+        ),
+      );
+    }
+  }
+  Future<void> pickLogo(ImageSource source) async {
+    try {
+      XFile? pickedImage = await _logoPicker.pickImage(source: source);
 
       if (pickedImage != null) {
         await uploadImageToFirebase(File(pickedImage.path));
@@ -95,6 +112,25 @@ class _ProfileState extends State<Profile> {
       );
     }
   }
+  Future<void> uploadImageLogoToFirebase(File image) async {
+    try {
+      Reference reference = FirebaseStorage.instance
+          .ref()
+          .child("images/${DateTime.now().microsecondsSinceEpoch}.png");
+      await reference.putFile(image);
+      String downloadUrl = await reference.getDownloadURL();
+      setState(() {
+        logoUrl = downloadUrl;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.black,
+          content: Text("Failed to upload image: $e"),
+        ),
+      );
+    }
+  }
 
   Future<void> updateCustomerDetails() async {
     try {
@@ -111,6 +147,7 @@ class _ProfileState extends State<Profile> {
         "gst": _gst.text,
         "Profession": _selectedProfession,
         "Profile Image": imageUrl,
+        "Logo":logoUrl,
         
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,6 +170,12 @@ class _ProfileState extends State<Profile> {
   Future<void> clearProfileImage() async {
     setState(() {
       imageUrl = null;
+    });
+  }
+  
+  Future<void> clearLogoImage() async {
+    setState(() {
+      logoUrl = null;
     });
   }
 
@@ -163,7 +206,10 @@ class _ProfileState extends State<Profile> {
               style: TextStyle(color: Colors.black, fontSize: 20),
             ),
             const SizedBox(height: 20),
-            Stack(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                 Stack(
               alignment: Alignment.center,
               children: [
                 CircleAvatar(
@@ -187,6 +233,33 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: logoUrl != null ? NetworkImage(logoUrl!) : null,
+                  child: logoUrl == null ? const Icon(Icons.business_center, size: 60) : null,
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      pickLogo(ImageSource.gallery); // Pick image from gallery
+                    },
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+              ],
+            )
+            ,
             const SizedBox(height: 30),
             buildTextField(_organisation, 'Organisation / Proprietor Name', Icons.person),
             const SizedBox(height: 20),

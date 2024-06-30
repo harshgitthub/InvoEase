@@ -95,7 +95,7 @@ final _taxController = TextEditingController();
           _customerName = '$salutation $firstName $lastName';
           _customerAddress = customerSnapshot['Address'];
           _customerEmail = customerSnapshot['Email'];
-          _customerWorkPhone = customerSnapshot['Work-Phone'];
+          _customerWorkPhone = customerSnapshot['Work-phone'];
           _customerMobile = customerSnapshot['Mobile'];
           _customerid = customerSnapshot["customerID"];
         });
@@ -246,180 +246,167 @@ final _taxController = TextEditingController();
         title: const Text("New Invoice"),
       ),
       drawer: drawer(context),
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    body:SingleChildScrollView(
+  child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Invoice ID: $_invoiceId',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 105),
-                  Text(
-                    '$formattedDate',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ],
+            Text(
+              'Invoice ID: $_invoiceId',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              formattedDate,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Due Date:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            GestureDetector(
+              onTap: _selectDueDate,
+              child: Text(
+                _selectedDate == null
+                    ? formattedDate
+                    : DateFormat('dd-MM-yyyy').format(_selectedDate!),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Due Date:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 165),
-                  GestureDetector(
-                    onTap: _selectDueDate,
-                    child: Text(
-                      _selectedDate == null
-                          ? '$formattedDate'
-                          : DateFormat('dd-MM-yyyy').format(_selectedDate!),
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade400, width: 1.5),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: TextField(
+                    controller: _taxController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter the tax amount',
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            Container(
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey.shade400, width: 1.5),
-    borderRadius: BorderRadius.circular(8.0),
-  ),
-  child: Row(
-    children: [
-      Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: TextField(
-            controller: _taxController,
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Enter the tax amount',
-              // Additional styling options can be added here
-            ),
-          ),
-        ),
-      ),
-      Container(
-        height: 40.0,
-        width: 1.5,
-        color: Colors.grey.shade400,
-      ),
-      Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: TextField(
-            controller: _discountController,
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Enter the discount amount',
-              // Additional styling options can be added here
-            ),
-          ),
-        ),
-      ),
-    ],
-  ),
-)
-
-              ,const SizedBox(height: 10,)
-             ,
-              DropdownButton<String>(
-                  value: _paymentMethod,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _paymentMethod = newValue;
-                    });
-                  },
-                  items: _paymentMethods.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
-             
-              const SizedBox(height: 16),
+              ),
               Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blue, width: 2),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: ElevatedButton(
-                  onPressed: _addItems,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    '+ Add inline items',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+                height: 40.0,
+                width: 1.5,
+                color: Colors.grey.shade400,
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: TextField(
+                    controller: _discountController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter the discount amount',
+                    ),
                   ),
                 ),
               ),
-              if (_selectedItems.isNotEmpty) ...[
-                const SizedBox(height: 16),
-               
-
-                const SizedBox(height: 16),
-                const Text(
-                  'Selected Items:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _selectedItems.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(_selectedItems[index]['itemName']),
-                      subtitle: Text('${_selectedItems[index]['quantity']} X ${_selectedItems[index]['rate']}'),
-                      trailing: Text('Price: \₹${_selectedItems[index]['price'].toStringAsFixed(2)}', style: const TextStyle(fontSize: 15),),
-                    );
-                  },
-
-                ),
-                 const SizedBox(height: 16),
-
-                Row(
-                  
-                  children: [
-                    Text(
-                      'Sub Total:                               ₹${_totalAmount.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Total:                                       ₹${_totalBill.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _saveInvoice,
-                  child: const Text('Save Invoice'),
-                ),
-              ],
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+        DropdownButton<String>(
+          value: _paymentMethod,
+          onChanged: (String? newValue) {
+            setState(() {
+              _paymentMethod = newValue!;
+            });
+          },
+          items: _paymentMethods.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue, width: 2),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: ElevatedButton(
+            onPressed: _addItems,
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+            
+            ),
+            child: const Text(
+              '+ Add inline items',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        if (_selectedItems.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          const Text(
+            'Selected Items:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _selectedItems.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(_selectedItems[index]['itemName']),
+                subtitle: Text('${_selectedItems[index]['quantity']} X ${_selectedItems[index]['rate']}'),
+                trailing: Text('Price: ₹${_selectedItems[index]['price'].toStringAsFixed(2)}', style: const TextStyle(fontSize: 15)),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                'Sub Total: ₹${_totalAmount.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Total: ₹${_totalBill.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _saveInvoice,
+            child: const Text('Save Invoice'),
+          ),
+        ],
+      ],
+    ),
+  ),
+)
     );
   }
 
@@ -668,11 +655,11 @@ class _AddItemsState extends State<AddItems> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
+                  boxShadow: const [
                      BoxShadow(
                       color: Colors.black12,
                       blurRadius: 4.0,
-                      offset: const Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
@@ -700,8 +687,8 @@ class _AddItemsState extends State<AddItems> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.0),
-                    boxShadow: [
-                      const BoxShadow(
+                    boxShadow: const [
+                      BoxShadow(
                         color: Colors.black12,
                         blurRadius: 4.0,
                         offset: Offset(0, 2),
@@ -732,8 +719,8 @@ class _AddItemsState extends State<AddItems> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
-                    const BoxShadow(
+                  boxShadow: const [
+                    BoxShadow(
                       color: Colors.black12,
                       blurRadius: 4.0,
                       offset: Offset(0, 2),
@@ -803,4 +790,317 @@ class _AddItemsState extends State<AddItems> {
     },
   ).show();
 }
+}
+
+
+class Itemadd2 extends StatefulWidget {
+  const Itemadd2({super.key});
+
+  @override
+  State<Itemadd2> createState() => _Itemadd2State();
+}
+
+class _Itemadd2State extends State<Itemadd2> {
+  var currentuser = FirebaseAuth.instance.currentUser;
+
+  final _itemname = TextEditingController();
+  final _sellingprice = TextEditingController();
+  final _description = TextEditingController();
+
+  void addItem(String itemname, int? sellingprice, String description) async {
+    if (itemname.isEmpty  ) {
+      _showErrorDialog(context, "Add Name of item");
+      return;
+    }
+    if(sellingprice == null){
+      _showErrorDialog(context, "Add price of item"); 
+      return;
+    }
+
+    try {
+      // Check if an item with the same name already exists
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("USERS")
+          .doc(currentuser!.uid)
+          .collection("items")
+          .where("Item Name", isEqualTo: itemname)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Item with the same name exists, show warning dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Warning'),
+              content: const Text('An item with this name already exists. Do you want to proceed?'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Rename'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Proceed'),
+                  onPressed: () {
+                    // Proceed with adding the item
+                    _saveItem(itemname, sellingprice, description);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // No existing item with the same name, proceed to add
+        _saveItem(itemname, sellingprice, description);
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+ void _saveItem(String itemname, int? sellingprice, String description) async {
+  try {
+    await FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentuser!.uid)
+        .collection("items")
+        .add({
+          "Item Name": itemname,
+          "Selling Price": sellingprice,
+          "Description": description,
+        });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Success"),
+          content: const Text("Item added successfully."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                //  Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => AddItems()
+                //   ),
+                // );
+                
+              },
+            ),
+          ],
+        );
+      },
+    );
+    _itemname.clear();
+    _sellingprice.clear();
+    _description.clear();
+  } catch (e) {
+    print("Error: $e");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text("Failed to add item. Error: $e"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+ void _showErrorDialog(BuildContext context, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.error,
+    animType: AnimType.bottomSlide,
+    title: 'Error',
+    desc: message,
+    btnOkText: 'OK',
+    btnOkColor: Colors.red,
+    btnOkOnPress: () {
+      // Optionally perform some action on button press
+    },
+  ).show();
+}
+
+
+  @override
+  void dispose() {
+    _itemname.dispose();
+    _sellingprice.dispose();
+    _description.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser ;
+  return 
+   StreamBuilder(
+    stream: FirebaseFirestore.instance
+        .collection("USERS")
+        .doc(currentUser?.uid)
+        .collection("details")
+        .doc(currentUser?.uid)
+        .snapshots(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Loading"),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      } else if (snapshot.hasError) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Loading"),
+          ),
+          body: Center(child: Text("Error: ${snapshot.error}")),
+        );
+      } else if (!snapshot.hasData || !snapshot.data!.exists) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("No data"),
+          ),
+          body: const Center(child: Text("No data available")),
+        );
+      } else {
+        var userData = snapshot.data!;
+        var item = userData["item"] ?? "Default Item Name";
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Add $item'),
+          ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Text(
+                '$item *',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _itemname,
+                  decoration:  InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Add name of $item ',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Description',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _description,
+                  maxLines: null, // Allow multiple lines of description
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Add description of $item',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  ),
+                ),
+              ),
+               const SizedBox(height: 20),
+              const Text(
+                'Price *',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                child: TextFormField(
+                  controller: _sellingprice,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration:  InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'price of $item',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      addItem(
+                        _itemname.text.trim(),
+                        int.tryParse(_sellingprice.text.trim()),
+                        _description.text.trim(),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('Save', style: TextStyle(color: Colors.white)),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      _itemname.clear();
+                      _sellingprice.clear();
+                      _description.clear();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      )
+        );
+      }
+    });
+  }
 }
