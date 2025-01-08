@@ -415,7 +415,7 @@ class _HomeState extends State<Home> {
       ),
              
               const SizedBox(height: 20),
-              _buildRecentActivities(),
+              // _buildRecentActivities(),
             ],
           ),
         ),

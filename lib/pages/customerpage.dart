@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Customerpage extends StatefulWidget {
-  const Customerpage({Key? key}) : super(key: key);
+  const Customerpage({super.key});
 
   @override
   State<Customerpage> createState() => _CustomerpageState();
@@ -216,7 +216,7 @@ void _showInfoBottomSheet(BuildContext context) {
             children: <Widget>[
              const Text(
                 'Info',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -304,12 +304,12 @@ void _showInfoBottomSheet(BuildContext context) {
                   (a['First Name'] ?? '').compareTo(b['First Name'] ?? ''));
               break;
             case 'Entry Time':
-              documents.sort((a, b) =>
+              documents.sort((b, a) =>
                   (a['timestamp'] as Timestamp).compareTo(b['timestamp'] as Timestamp));
               break;
             default:
               // Default sorting
-               documents.sort((a, b) =>
+               documents.sort((b, a) =>
                   (a['timestamp'] as Timestamp).compareTo(b['timestamp'] as Timestamp));
           }
 
@@ -332,11 +332,11 @@ void _showInfoBottomSheet(BuildContext context) {
 
     child:  ListTile(
      leading: CircleAvatar(
+    backgroundColor: Colors.blue,
     child: Text(
       '${doc['First Name'][0]}',
-      style: TextStyle(color: Colors.white),
-    ),
-    backgroundColor: Colors.blue, // You can set the background color as you prefer
+      style: const TextStyle(color: Colors.white),
+    ), // You can set the background color as you prefer
   ),
   contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 15.0),
   subtitle: Row(

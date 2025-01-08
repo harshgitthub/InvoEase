@@ -39,19 +39,72 @@ class _ForgetpasswordState extends State<Forgetpassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+      ),
+      backgroundColor: Colors.blue,
+      
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        child: Column( 
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextField(
+            
+          const SizedBox(height: 180,)
+            ,
+             TextField(
               controller: email,
-              decoration: const InputDecoration(hintText: "Enter email"),
+              decoration: InputDecoration(
+                hintText: 'Enter E-mail',
+                hintStyle: TextStyle(color: Colors.grey[400]),
+                prefixIcon: const Icon(Icons.email , color: Colors.blue,),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.blue, width: 2),
+                ),
+              ),
+              obscureText:false,
+              textInputAction: TextInputAction.done,
+              
             ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
+            const SizedBox(height: 40),
+          
+            
+            ElevatedButton.icon(
               onPressed: () => reset(),
-              child: const Text("Send link"),
+            
+              label: const Text(
+                'Send Link',
+                style: TextStyle(color: Colors.blue, fontSize: 15),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12 , horizontal: 40),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+
+                Navigator.pushNamed(context, '/login');
+              },
+              
+              label: const Text(
+                'Back to Login',
+                style: TextStyle(color: Colors.blue, fontSize: 15),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12 , horizontal: 30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
           ],
         ),

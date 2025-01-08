@@ -16,7 +16,6 @@ import 'package:cloneapp/pages/paymentreceived.dart';
 import 'package:cloneapp/pages/report.dart';
 import 'package:cloneapp/pages/setting.dart';
 import 'package:cloneapp/pages/signup.dart';
-import 'package:cloneapp/pages/subpages/about.dart';
 import 'package:cloneapp/pages/subpages/addnotes.dart';
 import 'package:cloneapp/pages/subpages/billing.dart';
 import 'package:cloneapp/pages/subpages/designpage.dart';
@@ -24,19 +23,16 @@ import 'package:cloneapp/pages/subpages/invoicedata.dart';
 import 'package:cloneapp/pages/subpages/calendar.dart';
 import 'package:cloneapp/pages/subpages/notespage.dart';
 import 'package:cloneapp/pages/subpages/organisation.dart';
-import 'package:cloneapp/pages/subpages/settings/applock.dart';
 import 'package:cloneapp/pages/subpages/settings/customerdetails.dart';
-import 'package:cloneapp/pages/subpages/settings/invoicedetails.dart';
 // import 'package:cloneapp/pages/subpages/settings/recover.dart';
-import 'package:cloneapp/pages/subpages/settings/taskadd.dart';
 import 'package:cloneapp/pages/subpages/profile.dart';
 import 'package:cloneapp/pages/verify.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 // import 'package:firebase_app_check/firebase_app_check.dart';
 
 
@@ -44,12 +40,32 @@ void main() async {
     // Ensure Flutter binding is initialized before running the app
   WidgetsFlutterBinding.ensureInitialized();
 
+
   // Initialize Hive for local storage (if needed)
   await Hive.initFlutter();
 
   // Initialize Firebase with default options
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+  await FirebaseAppCheck.instance.activate(
+    // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
+    // argument for `webProvider`
+    // webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
+    // your preferred provider. Choose from:
+    // 1. Debug provider
+    // 2. Safety Net provider
+    // 3. Play Integrity provider
+    androidProvider: AndroidProvider.debug,
+    // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
+        // your preferred provider. Choose from:
+        // 1. Debug provider
+        // 2. Device Check provider
+        // 3. App Attest provider
+        // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
+    // appleProvider: AppleProvider.appAttest,
   );
 
   
@@ -126,7 +142,7 @@ class _MyAppState extends State<MyApp> {
         // '/link_account': (context) => LinkAccountScreen(),
       //  '/preference': (context)=> const Preferences(),
         '/invoicetemplate':(context)=> const InvoiceTemplate(),
-        '/verify':(context)=> const Verify(),
+        // '/verify':(context)=> const Verify(),
         '/password':(context)=>  DesignPage(),
         // '/pw':(context)=>  Invoicedetails(customerData: customerData),
         '/notepage':(context)=> Notes(),

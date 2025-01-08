@@ -1,5 +1,7 @@
 import 'package:cloneapp/pages/customerpage.dart';
 import 'package:cloneapp/pages/home.dart';
+import 'package:cloneapp/pages/signup.dart';
+import 'package:cloneapp/pages/subpages/phone.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -24,6 +26,7 @@ class _LoginState extends State<Login> {
   final _password = TextEditingController();
   bool _rememberMe = false;
   late Box box1;
+  bool _isPasswordVisible  = false ;
 
   @override
   void initState() {
@@ -103,14 +106,17 @@ class _LoginState extends State<Login> {
               decoration: InputDecoration(
                 hintText: 'Password',
                 hintStyle: TextStyle(color: Colors.grey[400]),
-                prefixIcon: const Icon(Icons.lock, color: Colors.blue),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    // Implement forgot password functionality
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Forgetpassword()));
-                  },
-                  child: const Icon(Icons.help_outline, color: Colors.white),
-                ),
+                prefixIcon: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              child: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.blue,
+              ),
+            ),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -118,7 +124,7 @@ class _LoginState extends State<Login> {
                   borderSide: const BorderSide(color: Colors.blue, width: 2),
                 ),
               ),
-              obscureText: true,
+              obscureText: !_isPasswordVisible,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _signin(),
             ),
@@ -166,7 +172,17 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12,),
+            TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  Signup()));
+                  },
+                  child: const Text(
+                    'New User SignUp Now',
+                    style: TextStyle(color: Colors.white , fontSize: 15),
+                  ),
+                ),
+            const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -176,9 +192,9 @@ class _LoginState extends State<Login> {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Implement sign-in with Facebook
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PhoneAuthState()  ));
                   },
-                  icon: const FaIcon(FontAwesomeIcons.facebook, color: Colors.white),
+                  icon: const FaIcon(FontAwesomeIcons.phone, color: Colors.white),
                 ),
                 IconButton(
                   onPressed: () {

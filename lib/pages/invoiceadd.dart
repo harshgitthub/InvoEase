@@ -49,7 +49,6 @@ final _taxController = TextEditingController();
   void initState() {
     _fetchCustomerDetails();
     super.initState();
-   
     _generateInvoiceId();
     _formatDate();
     _calculateTotalAmount();
@@ -243,9 +242,9 @@ final _taxController = TextEditingController();
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("New Invoice"),
+        title: const Text("Invoice"),
       ),
-      drawer: drawer(context),
+      
     body:SingleChildScrollView(
   child: Padding(
     padding: const EdgeInsets.all(16.0),
@@ -278,7 +277,7 @@ final _taxController = TextEditingController();
               onTap: _selectDueDate,
               child: Text(
                 _selectedDate == null
-                    ? formattedDate
+                    ? 'Select Due date'
                     : DateFormat('dd-MM-yyyy').format(_selectedDate!),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
@@ -327,7 +326,10 @@ final _taxController = TextEditingController();
             ],
           ),
         ),
+        
         const SizedBox(height: 10),
+        
+          
         DropdownButton<String>(
           value: _paymentMethod,
           onChanged: (String? newValue) {
@@ -336,12 +338,14 @@ final _taxController = TextEditingController();
             });
           },
           items: _paymentMethods.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
+            return 
+             DropdownMenuItem<String>(
               value: value,
               child: Text(value),
             );
           }).toList(),
         ),
+      
         const SizedBox(height: 16),
         Container(
           width: double.infinity,
@@ -353,11 +357,11 @@ final _taxController = TextEditingController();
             onPressed: _addItems,
             style: ElevatedButton.styleFrom(
               elevation: 0,
-            
+
             ),
             child: const Text(
               '+ Add inline items',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold , color: Colors.blue),
             ),
           ),
         ),
@@ -369,17 +373,34 @@ final _taxController = TextEditingController();
           ),
           const SizedBox(height: 8),
           ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _selectedItems.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(_selectedItems[index]['itemName']),
-                subtitle: Text('${_selectedItems[index]['quantity']} X ${_selectedItems[index]['rate']}'),
-                trailing: Text('Price: ₹${_selectedItems[index]['price'].toStringAsFixed(2)}', style: const TextStyle(fontSize: 15)),
-              );
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: _selectedItems.length,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text(_selectedItems[index]['itemName']),
+      subtitle: Text('${_selectedItems[index]['quantity']} X ${_selectedItems[index]['rate']}'),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Price: ₹${_selectedItems[index]['price'].toStringAsFixed(2)}',
+            style: const TextStyle(fontSize: 15),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              setState(() {
+                _selectedItems.removeAt(index);
+              });
             },
           ),
+        ],
+      ),
+    );
+  },
+)
+,
           const SizedBox(height: 16),
           Row(
             children: [
@@ -398,12 +419,25 @@ final _taxController = TextEditingController();
             ],
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _saveInvoice,
-            child: const Text('Save Invoice'),
+          
+           Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue, width: 2),
+            borderRadius: BorderRadius.circular(5),
           ),
+          child:    
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+
+            ),
+            onPressed: _saveInvoice,
+            child: const Text('Save Invoice' , style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold , color: Colors.blue),),
+          ),
+           )
         ],
-      ],
+                ],
     ),
   ),
 )

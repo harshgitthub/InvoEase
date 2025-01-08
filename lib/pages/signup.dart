@@ -13,6 +13,7 @@ class _SignupState extends State<Signup> {
   final _passwordController = TextEditingController();
 
     bool _termsChecked = false;
+    bool _isPasswordVisible = false ;
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +58,24 @@ class _SignupState extends State<Signup> {
              decoration: InputDecoration(
                 hintText: 'Password',
                 hintStyle: TextStyle(color: Colors.grey[400]),
-                prefixIcon: const Icon(Icons.lock, color: Colors.blue,),
+                prefixIcon: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              child: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.blue,
+              ),
+            ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 fillColor: Colors.white,
                 filled: true,
               ),
-              obscureText: true,
+              obscureText: !_isPasswordVisible,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a password';
@@ -83,7 +94,7 @@ class _SignupState extends State<Signup> {
                       });
                     },
                   ),
-                  TextButton(onPressed: (){}, child: Text("I agree to the terms and conditions" , style: TextStyle(color: Colors.white),))
+                  TextButton(onPressed: (){}, child: const Text("I agree to the terms and conditions" , style: TextStyle(color: Colors.white),))
                 ],
               ),
 

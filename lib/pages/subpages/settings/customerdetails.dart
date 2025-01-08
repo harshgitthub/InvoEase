@@ -53,6 +53,10 @@ class _CustomerDetailsState extends State<CustomerDetails> {
           title: const Text('Customer Details'),
           actions: [
             IconButton(
+            onPressed: _fetchInvoices,
+            icon: const Icon(Icons.refresh),
+          ),
+            IconButton(
               onPressed: () {
                 Navigator.push(
                   context,

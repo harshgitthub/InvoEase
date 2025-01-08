@@ -1,6 +1,7 @@
 import 'package:cloneapp/pages/home.dart';
 import 'package:cloneapp/pages/open.dart';
 import 'package:cloneapp/pages/subpages/pdf.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
@@ -82,34 +83,34 @@ class _SettingState extends State<Setting> {
                     Navigator.pushNamed(context, '/invoicetemplate');
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.switch_access_shortcut),
-              title: const Text('Switch Organisation'),
-              onTap: () {
-                // Add functionality for this list tile
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Users'),
-              onTap: () {
-                Navigator.pushNamed(context, '/delete');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.room_preferences),
-              title: const Text('Preferences'),
-              onTap: () {
-               Navigator.pushNamed(context, '/preference');
-              },
-            ),
-          ListTile(
-            leading: const Icon(Icons.security),
-            title: const Text('Privacy & Security'),
-            onTap: () {
-              Navigator.pushNamed(context, '/security');
-            },
-          ),
+            // ListTile(
+            //   leading: const Icon(Icons.switch_access_shortcut),
+            //   title: const Text('Switch Organisation'),
+            //   onTap: () {
+            //     // Add functionality for this list tile
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.person),
+            //   title: const Text('Users'),
+            //   onTap: () {
+            //     Navigator.pushNamed(context, '/delete');
+            //   },
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.room_preferences),
+            //   title: const Text('Preferences'),
+            //   onTap: () {
+            //    Navigator.pushNamed(context, '/preference');
+            //   },
+            // ),
+          // ListTile(
+          //   leading: const Icon(Icons.security),
+          //   title: const Text('Privacy & Security'),
+          //   onTap: () {
+          //     Navigator.pushNamed(context, '/security');
+          //   },
+          // ),
           const Divider(),
         ListTile(
       leading: const Icon(Icons.feedback),
@@ -141,7 +142,17 @@ class _SettingState extends State<Setting> {
              Navigator.pushNamed(context, '');
             },
           ),
-         
+const Divider(),
+         ListTile(
+  contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+  leading: const Icon(Icons.delete_forever, color: Colors.red),
+  title: const Text('Delete User', style: TextStyle(color: Colors.red)),
+  subtitle: const Text('This action cannot be undone.All the user details would be completely deleted.'),
+  trailing: const Icon(Icons.warning, color: Colors.red),
+  onTap:   () => _showConfirmationDialog(context),
+),
+const SizedBox(height: 50,),
+
        
       ]),
     ));
@@ -254,6 +265,81 @@ void _showLogoutConfirmationDialog(BuildContext context) {
     // Implement a way to show the error message in the UI, for example:
     print(message); // You can replace this with a more appropriate UI response
   }
+}
+Future<void> _deleteUserAccount(BuildContext context) async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Delete user document from Firestore and user from Firebase Authentication
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      DocumentReference userDoc = FirebaseFirestore.instance.collection('USERS').doc(user.uid);
+
+      batch.delete(userDoc);
+
+      await batch.commit();
+      await user.delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User account deleted successfully')),
+      );
+
+      // Navigate to the Open screen after successful deletion
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Open()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      // Navigate to the Open screen if no user is logged in
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Open()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'requires-recent-login') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You need to re-login before deleting your account')),
+      );
+      Navigator.pushNamed(context, '/login');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting user account: ${e.message}')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('An error occurred: $e')),
+    );
+  }
+}
+
+void _showConfirmationDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Delete'),
+        content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              _deleteUserAccount(context); // Proceed with account deletion
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
  

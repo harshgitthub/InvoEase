@@ -18,15 +18,15 @@ class DeleteUser extends StatelessWidget {
 
         await batch.commit();
         await user.delete();
- Navigator.push(context, MaterialPageRoute(builder: (context)=> Open()));
+ Navigator.push(context, MaterialPageRoute(builder: (context)=> const Open()));
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User account deleted successfully')),
+          const SnackBar(content: const Text('User account deleted successfully')),
         );
 
         // Navigate to the open screen
        
       } else {
-         Navigator.push(context, MaterialPageRoute(builder: (context)=> Open()));
+         Navigator.push(context, MaterialPageRoute(builder: (context)=> const Open()));
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('No user is currently logged in')),
         // );
@@ -34,7 +34,7 @@ class DeleteUser extends StatelessWidget {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('You need to re-login before deleting your account')),
+          const SnackBar(content: Text('You need to re-login before deleting your account')),
         );
         Navigator.pushNamed(context, '/login');
         // You can add logic here to prompt the user to re-authenticate
@@ -55,21 +55,21 @@ class DeleteUser extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> Open())); // Close the dialog
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> const Open())); // Close the dialog
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 _deleteUserAccount(context); // Proceed with account deletion
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
           ],
         );
@@ -83,26 +83,15 @@ class DeleteUser extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Delete User Account'),
+        title: const Text('Delete User Account'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // if (user != null) ...[
-            //   Text(
-            //     'User Details:',
-            //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            //   ),
-            //   SizedBox(height: 8),
-            //   Text('Name: ${user.displayName ?? 'N/A'}'),
-            //   SizedBox(height: 4),
-            //   Text('Email: ${user.email ?? 'N/A'}'),
-            //   SizedBox(height: 16),
-            // ],
             ElevatedButton(
               onPressed: () => _showConfirmationDialog(context),
-              child: Text('Delete Account'),
+              child: const Text('Delete Account'),
             ),
           ],
         ),

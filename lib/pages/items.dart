@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloneapp/pages/home.dart';
 import 'package:cloneapp/pages/invoice.dart';
@@ -143,7 +142,7 @@ class _ItemsState extends State<Items> {
                     title: Text(
                       "${doc["Item Name"]}",
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                      
                         color: Colors.black,
                         fontSize: 20
                       ),
@@ -154,14 +153,13 @@ class _ItemsState extends State<Items> {
                         const SizedBox(height: 5),
                         Text(
                           "${doc["Description"]}",
-                          style: const TextStyle(color: Colors.grey ,fontWeight: FontWeight.w700,fontSize: 16),
+                          style: const TextStyle(color: Colors.grey ,fontSize: 16),
                         ),
                         const SizedBox(height: 5),
                         Text(
                           "Price: ₹ ${doc["Selling Price"]}",
                           style: const TextStyle(
                             color: Colors.blue,
-                            fontWeight: FontWeight.w700,
                             fontSize: 16
                           ),
                         ),
